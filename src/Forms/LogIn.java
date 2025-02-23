@@ -3,6 +3,10 @@ import java.sql.*;
 import Database.Connect;
 import javax.swing.JOptionPane;
 import MyLib.User;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  *
@@ -159,9 +163,37 @@ public class LogIn extends javax.swing.JFrame implements User {
         return user;
     }
     
+    private boolean isValidEmail(String email) {
+        // Regular expression to validate email format
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+
+        if (!matcher.matches()) {
+            return false;
+        }
+
+        // Extract domain and perform DNS lookup
+        String domain = email.substring(email.indexOf("@") + 1);
+        try {
+            InetAddress.getByName(domain);
+        } catch (UnknownHostException e) {
+            return false;
+        }
+        return true;
+    }
+    
     private void LogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogInActionPerformed
+        if (email.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Input your email.");
+                return;
+        } else if (!isValidEmail(email.getText())) {
+                JOptionPane.showMessageDialog(null, "Invalid email address.");
+                return;
+        }
+
         boolean user = validateUser();
-        
+
         if (user){
             JOptionPane.showMessageDialog(null, "Sign In Successful!");
             dispose();
@@ -177,7 +209,7 @@ public class LogIn extends javax.swing.JFrame implements User {
         dispose();
         new SignUp().setVisible(true);
     }//GEN-LAST:event_SignUpActionPerformed
-
+      
     private void emailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_emailFocusLost
         if(email.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Input your email.");
