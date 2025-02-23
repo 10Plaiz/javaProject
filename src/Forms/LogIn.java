@@ -164,7 +164,7 @@ public class LogIn extends javax.swing.JFrame implements User {
     }
     
     private boolean isValidEmail(String email) {
-        // Regular expression to validate email format
+        // Accepted values for a valid email
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(email);
@@ -173,7 +173,7 @@ public class LogIn extends javax.swing.JFrame implements User {
             return false;
         }
 
-        // Extract domain and perform DNS lookup
+        // Looking the DNS up if its valid thru regex import
         String domain = email.substring(email.indexOf("@") + 1);
         try {
             InetAddress.getByName(domain);
