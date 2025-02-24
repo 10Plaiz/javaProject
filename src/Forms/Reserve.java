@@ -1,6 +1,7 @@
 package Forms;
 
 import Database.Connect;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -157,14 +158,16 @@ public class Reserve extends javax.swing.JFrame {
 
             // The DefaultComboBoxModel is a placeholder to store all the SQM values
             javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
-
+            model.addElement("Any");
+            
             // Loop through results and add each SQM to the combo box
             while (result.next()) {
                 model.addElement(result.getString("lotsize"));
             }
 
-            // Finally, set the model to the combo box
+            // Finally, set the model to the combo box (dropdown)
             sizeBox.setModel(model);
+            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
@@ -179,13 +182,14 @@ public class Reserve extends javax.swing.JFrame {
             
             // The DefaultComboBoxModel is a placeholder to store all the SQM values
             javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
-
+            model.addElement("Any");
+            
             // Loop through results and add each SQM to the combo box
             while (result.next()) {
                 model.addElement(result.getString("Block"));
             }
 
-            // Finally, set the model to the combo box
+            // Finally, set the model to the combo box (dropdown)
             blockBox.setModel(model);
             
         } catch (Exception e) {
@@ -195,22 +199,46 @@ public class Reserve extends javax.swing.JFrame {
     
     // This method is used for the Search Button
     public void Search() {
-        String search = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'None') AS Owner FROM Lots WHERE LotSize = ? AND Block = ?";;
-        String lotsize = sizeBox.getSelectedItem().toString();
+        // Base query
+        String search = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'None') AS Owner FROM Lots WHERE 1=1";
+
+        // Retrieve selected values
+        String lotSize = sizeBox.getSelectedItem().toString();
         String block = blockBox.getSelectedItem().toString();
+
+        // Checking if the user selected "Any" in lotSize
+        if (!lotSize.equalsIgnoreCase("Any")) {
+            search += " AND CAST(LotSize AS DECIMAL) = ?";
+        } // Checking if the user selected "Any" in block
+        if (!block.equalsIgnoreCase("Any")) {
+            search += " AND Block = ?";
+        }
 
         try {
             pStatement = con.prepareStatement(search);
+            int paramIndex = 1;
 
-            pStatement.setString(1, lotsize);
-            pStatement.setString(2, block);
+            // Statements if option is not "Any" on the other ones
+            if (!lotSize.equalsIgnoreCase("Any")) {
+                pStatement.setBigDecimal(paramIndex++, new BigDecimal(lotSize));
+            }
+            if (!block.equalsIgnoreCase("Any")) {
+                pStatement.setString(paramIndex++, block);
+            }
 
             result = pStatement.executeQuery();
 
-            // Display all the rows in the jTable
+            // Check if there are results
+            if (!result.isBeforeFirst()) {
+                JOptionPane.showMessageDialog(null, "No results found.");
+                return;
+            }
+
+            // Display results in jTable
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
+
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
     }
     
