@@ -12,6 +12,7 @@ import MyLib.User;
  * @author zeldr
  */
 public class SignUp extends javax.swing.JFrame implements User {
+    // Global Variables
     Connection con= Connect.connectdb();
     PreparedStatement ps=null;
     ResultSet rs=null;
@@ -58,30 +59,7 @@ public class SignUp extends javax.swing.JFrame implements User {
 
         jLabel3.setText("Password:");
 
-        fName.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                fNameFocusLost(evt);
-            }
-        });
-        fName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fNameActionPerformed(evt);
-            }
-        });
-
         jLabel4.setText("Confirm Password:");
-
-        password.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                passwordFocusLost(evt);
-            }
-        });
-
-        confirmPassword.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                confirmPasswordFocusLost(evt);
-            }
-        });
 
         jLabel2.setText("Sign Up");
 
@@ -94,24 +72,7 @@ public class SignUp extends javax.swing.JFrame implements User {
 
         jLabel5.setText("Last Name:");
 
-        lName.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                lNameFocusLost(evt);
-            }
-        });
-
         jLabel6.setText("Email:");
-
-        email.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                emailFocusLost(evt);
-            }
-        });
-        email.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                emailActionPerformed(evt);
-            }
-        });
 
         LogIn.setText("Log In");
         LogIn.addActionListener(new java.awt.event.ActionListener() {
@@ -202,14 +163,13 @@ public class SignUp extends javax.swing.JFrame implements User {
             ps.setString(1, email.getText());
             rs = ps.executeQuery();
             
-            if(rs.next()) {
-                // code that checks if the input already exists in the database, sign in will fail
+            if(rs.next()) {  // If it returned something
                 error = "Email already exists! Try another email.";
-                user = false; // Sign up invalid
+                user = false; 
             }
             else if(!password.getText().equals(confirmPassword.getText())) {
                 error = "Check your Password again if it is the same!";
-                user = false; // Sign up invalid
+                user = false;
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
@@ -247,48 +207,11 @@ public class SignUp extends javax.swing.JFrame implements User {
         createAccount();
     }//GEN-LAST:event_CreateAccountActionPerformed
 
-    private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_emailActionPerformed
-
-    private void fNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fNameActionPerformed
-
+    // Redirects to Log In Form
     private void LogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogInActionPerformed
         dispose();
         new LogIn().setVisible(true);
     }//GEN-LAST:event_LogInActionPerformed
-
-    private void fNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fNameFocusLost
-        if(fName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Input your first name.");
-        }
-    }//GEN-LAST:event_fNameFocusLost
-
-    private void lNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lNameFocusLost
-        if(lName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Input your last name.");
-        }
-    }//GEN-LAST:event_lNameFocusLost
-
-    private void emailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_emailFocusLost
-        if(email.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Input your email.");
-        }
-    }//GEN-LAST:event_emailFocusLost
-
-    private void passwordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passwordFocusLost
-        if(password.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Input a password.");
-        }
-    }//GEN-LAST:event_passwordFocusLost
-
-    private void confirmPasswordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_confirmPasswordFocusLost
-        if(confirmPassword.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Confirm your password.");
-        }
-    }//GEN-LAST:event_confirmPasswordFocusLost
 
     /**
      * @param args the command line arguments

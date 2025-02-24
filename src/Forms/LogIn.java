@@ -14,13 +14,8 @@ import java.net.UnknownHostException;
  */
 public class LogIn extends javax.swing.JFrame implements User {
     Connection con=Connect.connectdb();
-    PreparedStatement ps1 = null;
-    PreparedStatement ps2 = null;
-    PreparedStatement ps3 = null;
-    
-    ResultSet rs1 = null;
-    ResultSet rs2 = null;
-    ResultSet rs3 = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
     
     private String firstName;
 
@@ -132,14 +127,15 @@ public class LogIn extends javax.swing.JFrame implements User {
             PasswordHasher hash = new PasswordHasher();
             
             // Getting the email and password from the form, then verifying it through the database
-            ps1 = con.prepareStatement(login);
-            ps1.setString(1, email.getText());
-            ps1.setString(2, hash.hashPassword(password.getText()));
-            rs1 = ps1.executeQuery();
+            ps = con.prepareStatement(login);
+            ps.setString(1, email.getText());
+            ps.setString(2, hash.hashPassword(password.getText()));
+            rs = ps.executeQuery();
             
-            if(rs1.next()) {
+            // If there is an existing email and password, returns true, if not, there is no account for that and returns false
+            if(rs.next()) {
                 user = true;
-                firstName = rs1.getString("fname");
+                firstName = rs.getString("fname");
             }
             else {
                 user = false;
@@ -171,6 +167,7 @@ public class LogIn extends javax.swing.JFrame implements User {
         return true;
     }
     
+    // Events
     private void LogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogInActionPerformed
         if (email.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Input your email.");
@@ -195,7 +192,6 @@ public class LogIn extends javax.swing.JFrame implements User {
         }
     }//GEN-LAST:event_LogInActionPerformed
 
-    // Events
     private void SignUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SignUpActionPerformed
         dispose();
         new SignUp().setVisible(true);

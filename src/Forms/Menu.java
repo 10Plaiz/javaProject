@@ -140,9 +140,16 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public void displayLots() {
+        // SQL Statements
         String data = "SELECT * FROM lots";
+        String noOwner = "UPDATE lots SET Owner = 'None' WHERE Owner IS NULL";
         
         try {
+            // If there is no owner in a lot property, set it to None
+            pStatement = con.prepareStatement(noOwner);
+            pStatement.executeUpdate();
+            
+            // Displays the table
             pStatement = con.prepareStatement(data);
             result = pStatement.executeQuery();
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
@@ -156,29 +163,37 @@ public class Menu extends javax.swing.JFrame {
         String sqm = "Select SQM from Lots";
         
         try {
+            // Get all data of SQM and display it to the Combo Box
             pStatement = con.prepareStatement(sqm);
             result = pStatement.executeQuery();
             
+            // The DefaultComboBoxModel is a placeholder to place all the SQM strings from the database
             javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
             
+            // A loop that adds all the returned SQM strings into the placeholder
             while (result.next()) {
                 model.addElement(result.getString("sqm"));
             }
+            
+            // Finally, display the placeholder to the Combo Box
             jComboBox2.setModel(model);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
     
+    // This method is used for the Search Button
     public void getSQM() {
         String sqm = jComboBox2.getSelectedItem().toString();
         String getSQM = "Select * from Lots where SQM = ?";
         
         try {
+            // Finds all row based from the chosen SQM in the Combo Box
             pStatement = con.prepareStatement(getSQM);
             pStatement.setString(1, sqm);
             result = pStatement.executeQuery();
             
+            // Finally, display all the rows in the jTable
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,e);
@@ -230,11 +245,6 @@ public class Menu extends javax.swing.JFrame {
                 new Menu("User Name").setVisible(true);
             }
         });
-        String[] strings = {"Item 1", "Item 2", "Item 3"};
-        Vector<String> vector = new Vector<>(Arrays.asList(strings));
-        for (String element : vector) {
-            System.out.println(element);
-        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
