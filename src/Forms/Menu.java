@@ -141,14 +141,9 @@ public class Menu extends javax.swing.JFrame {
 
     public void displayLots() {
         // SQL Statements
-        String data = "SELECT * FROM lots";
-        String noOwner = "UPDATE lots SET Owner = 'None' WHERE Owner IS NULL";
+        String data = "SELECT ID, SQM, Location, Price, COALESCE(Owner, 'No owner yet') AS Owner FROM lots";
         
         try {
-            // If there is no owner in a lot property, set it to None
-            pStatement = con.prepareStatement(noOwner);
-            pStatement.executeUpdate();
-            
             // Displays the table
             pStatement = con.prepareStatement(data);
             result = pStatement.executeQuery();
