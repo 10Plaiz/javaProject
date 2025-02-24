@@ -11,7 +11,7 @@ public class Connect {
         Connection con = null;
         try {
             // Connecting the project to the database
-            con = DriverManager.getConnection("jdbc:sqlite:C:/sqlite/RealEstate.db");
+            con = DriverManager.getConnection("jdbc:sqlite:C:/Git/javaProject/RealEstate.db");
             return con;
         } catch (SQLException e) {
             System.out.println("Connection Failed" + e);
