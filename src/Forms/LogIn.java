@@ -55,18 +55,6 @@ public class LogIn extends javax.swing.JFrame implements User {
 
         jLabel2.setText("Password");
 
-        email.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                emailFocusLost(evt);
-            }
-        });
-
-        password.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                passwordFocusLost(evt);
-            }
-        });
-
         jLabel3.setText("Log In");
 
         LogIn.setText("Log In");
@@ -185,21 +173,24 @@ public class LogIn extends javax.swing.JFrame implements User {
     
     private void LogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogInActionPerformed
         if (email.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Input your email.");
-                return;
+            JOptionPane.showMessageDialog(null, "Input your email.");
+            return;
         } else if (!isValidEmail(email.getText())) {
-                JOptionPane.showMessageDialog(null, "Invalid email address.");
-                return;
+            JOptionPane.showMessageDialog(null, "Invalid email address.");
+            return;
         }
-
+        if (password.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Input your password.");
+            return;
+        }
+    
         boolean user = validateUser();
-
-        if (user){
+    
+        if (user) {
             JOptionPane.showMessageDialog(null, "Sign In Successful!");
             dispose();
             new Menu(firstName).setVisible(true);
-        }
-        else {
+        } else {
             JOptionPane.showMessageDialog(null, "The email or the password is incorrect.");
         }
     }//GEN-LAST:event_LogInActionPerformed
@@ -209,19 +200,7 @@ public class LogIn extends javax.swing.JFrame implements User {
         dispose();
         new SignUp().setVisible(true);
     }//GEN-LAST:event_SignUpActionPerformed
-      
-    private void emailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_emailFocusLost
-        if(email.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Input your email.");
-        }
-    }//GEN-LAST:event_emailFocusLost
-
-    private void passwordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passwordFocusLost
-        if(password.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Input your password.");
-        }
-    }//GEN-LAST:event_passwordFocusLost
-
+  
     /**
      * @param args the command line arguments
      */

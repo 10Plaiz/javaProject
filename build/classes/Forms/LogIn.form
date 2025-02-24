@@ -93,14 +93,8 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="email">
-      <Events>
-        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="emailFocusLost"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JPasswordField" name="password">
-      <Events>
-        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="passwordFocusLost"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
