@@ -199,46 +199,40 @@ public class Reserve extends javax.swing.JFrame {
     
     // This method is used for the Search Button
     public void Search() {
-        // Base query
-        String search = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'None') AS Owner FROM Lots WHERE 1=1";
-
-        // Retrieve selected values
-        String lotSize = sizeBox.getSelectedItem().toString();
+        String baseQuery = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'None') AS Owner FROM Lots";
+        String lotsize = sizeBox.getSelectedItem().toString();
         String block = blockBox.getSelectedItem().toString();
+        boolean hasCondition = false;
 
-        // Checking if the user selected "Any" in lotSize
-        if (!lotSize.equalsIgnoreCase("Any")) {
-            search += " AND CAST(LotSize AS DECIMAL) = ?";
-        } // Checking if the user selected "Any" in block
-        if (!block.equalsIgnoreCase("Any")) {
-            search += " AND Block = ?";
+        if (!"Any".equals(lotsize)) {
+            baseQuery += " WHERE LotSize = ?";
+            hasCondition = true;
+        }
+
+        if (!"Any".equals(block)) {
+            if (hasCondition) {
+                baseQuery += " AND Block = ?";
+            } else {
+                baseQuery += " WHERE Block = ?";
+            }
         }
 
         try {
-            pStatement = con.prepareStatement(search);
+            pStatement = con.prepareStatement(baseQuery);
+
             int paramIndex = 1;
-
-            // Statements if option is not "Any" on the other ones
-            if (!lotSize.equalsIgnoreCase("Any")) {
-                pStatement.setBigDecimal(paramIndex++, new BigDecimal(lotSize));
+            if (!"Any".equals(lotsize)) {
+                pStatement.setString(paramIndex++, lotsize);
             }
-            if (!block.equalsIgnoreCase("Any")) {
-                pStatement.setString(paramIndex++, block);
+            if (!"Any".equals(block)) {
+                pStatement.setString(paramIndex, block);
             }
-
             result = pStatement.executeQuery();
 
-            // Check if there are results
-            if (!result.isBeforeFirst()) {
-                JOptionPane.showMessageDialog(null, "No results found.");
-                return;
-            }
-
-            // Display results in jTable
+            // Display all the rows in the jTable
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
-
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e);
         }
     }
     
