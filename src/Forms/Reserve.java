@@ -24,7 +24,8 @@ public class Reserve extends javax.swing.JFrame {
         this.userName = userName;
         initComponents();
         displayLots();
-        displaySQM();
+        displayLotSize();
+        displayBlock();
     }
 
     /**
@@ -37,15 +38,16 @@ public class Reserve extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        sizeBox = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         homeBtn = new javax.swing.JButton();
+        blockBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "50", "100" }));
+        sizeBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "50", "100" }));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -85,19 +87,24 @@ public class Reserve extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(132, 132, 132))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton1)
                         .addGap(323, 323, 323))
-                    .addComponent(homeBtn, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(homeBtn, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(sizeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(blockBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(279, 279, 279))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(homeBtn)
-                .addGap(14, 14, 14)
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(20, 20, 20)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sizeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(blockBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -127,7 +134,7 @@ public class Reserve extends javax.swing.JFrame {
 
     public void displayLots() {
         // SQL Statements
-        String data = "SELECT ID, SQM, Block, Lot, Location, Price, COALESCE(Owner, 'None') AS Owner FROM lots";
+        String data = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'None') AS Owner FROM lots";
         
         try {
             // Displays the table
@@ -140,53 +147,67 @@ public class Reserve extends javax.swing.JFrame {
         }
     }
     
-    public void displaySQM() {
-        String sqm = "SELECT DISTINCT SQM FROM Lots"; // Use DISTINCT to avoid duplicate entries
+    public void displayLotSize() {
+        String lotsize = "SELECT DISTINCT LotSize FROM Lots";
 
         try {
             // Get all unique SQM values from the database
-            pStatement = con.prepareStatement(sqm);
+            pStatement = con.prepareStatement(lotsize);
             result = pStatement.executeQuery();
 
             // The DefaultComboBoxModel is a placeholder to store all the SQM values
             javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
 
-            // Add "All" option at the beginning
-            model.addElement("All");
-
             // Loop through results and add each SQM to the combo box
             while (result.next()) {
-                model.addElement(result.getString("SQM"));
+                model.addElement(result.getString("lotsize"));
             }
 
             // Finally, set the model to the combo box
-            jComboBox2.setModel(model);
+            sizeBox.setModel(model);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
+    public void displayBlock() {
+        String block = "SELECT DISTINCT Block FROM Lots";
+        
+        try {
+            pStatement = con.prepareStatement(block);
+            result = pStatement.executeQuery();
+            
+            // The DefaultComboBoxModel is a placeholder to store all the SQM values
+            javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
+
+            // Loop through results and add each SQM to the combo box
+            while (result.next()) {
+                model.addElement(result.getString("Block"));
+            }
+
+            // Finally, set the model to the combo box
+            blockBox.setModel(model);
+            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
     
     // This method is used for the Search Button
-    public void getSQM() {
-        String sqm = jComboBox2.getSelectedItem().toString();
-        String getSQM;
-
-        if (sqm.equalsIgnoreCase("All")) {
-            getSQM = "SELECT ID, SQM, Block, Lot, Location, Price, COALESCE(Owner, 'None') AS Owner FROM Lots";
-        } else {
-            getSQM = "SELECT ID, SQM, Block, Lot, Location, Price, COALESCE(Owner, 'None') AS Owner FROM Lots WHERE SQM = ?";
-        }
+    public void Search() {
+        String search = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'None') AS Owner FROM Lots WHERE LotSize = ? AND Block = ?";;
+        String lotsize = sizeBox.getSelectedItem().toString();
+        String block = blockBox.getSelectedItem().toString();
 
         try {
-            pStatement = con.prepareStatement(getSQM);
+            pStatement = con.prepareStatement(search);
 
-            if (!sqm.equalsIgnoreCase("All")) {
-                pStatement.setString(1, sqm);
-            }
+            pStatement.setString(1, lotsize);
+            pStatement.setString(2, block);
 
             result = pStatement.executeQuery();
 
-            // Finally, display all the rows in the jTable
+            // Display all the rows in the jTable
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
@@ -194,7 +215,7 @@ public class Reserve extends javax.swing.JFrame {
     }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        getSQM();
+        Search();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void homeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBtnActionPerformed
@@ -238,11 +259,12 @@ public class Reserve extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> blockBox;
     private javax.swing.JButton homeBtn;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JComboBox<String> sizeBox;
     // End of variables declaration//GEN-END:variables
 }
