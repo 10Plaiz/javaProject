@@ -127,7 +127,7 @@ public class Reserve extends javax.swing.JFrame {
 
     public void displayLots() {
         // SQL Statements
-        String data = "SELECT ID, SQM, Location, Price, COALESCE(Owner, 'None') AS Owner FROM lots";
+        String data = "SELECT ID, SQM, Block, Lot, Location, Price, COALESCE(Owner, 'None') AS Owner FROM lots";
         
         try {
             // Displays the table
@@ -141,22 +141,25 @@ public class Reserve extends javax.swing.JFrame {
     }
     
     public void displaySQM() {
-        String sqm = "Select SQM from Lots";
-        
+        String sqm = "SELECT DISTINCT SQM FROM Lots"; // Use DISTINCT to avoid duplicate entries
+
         try {
-            // Get all data of SQM and display it to the Combo Box
+            // Get all unique SQM values from the database
             pStatement = con.prepareStatement(sqm);
             result = pStatement.executeQuery();
-            
-            // The DefaultComboBoxModel is a placeholder to place all the SQM strings from the database
+
+            // The DefaultComboBoxModel is a placeholder to store all the SQM values
             javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
-            
-            // A loop that adds all the returned SQM strings into the placeholder
+
+            // Add "All" option at the beginning
+            model.addElement("All");
+
+            // Loop through results and add each SQM to the combo box
             while (result.next()) {
-                model.addElement(result.getString("sqm"));
+                model.addElement(result.getString("SQM"));
             }
-            
-            // Finally, display the placeholder to the Combo Box
+
+            // Finally, set the model to the combo box
             jComboBox2.setModel(model);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
@@ -166,18 +169,27 @@ public class Reserve extends javax.swing.JFrame {
     // This method is used for the Search Button
     public void getSQM() {
         String sqm = jComboBox2.getSelectedItem().toString();
-        String getSQM = "Select * from Lots where SQM = ?";
-        
+        String getSQM;
+
+        if (sqm.equalsIgnoreCase("All")) {
+            getSQM = "SELECT ID, SQM, Block, Lot, Location, Price, COALESCE(Owner, 'None') AS Owner FROM Lots";
+        } else {
+            getSQM = "SELECT ID, SQM, Block, Lot, Location, Price, COALESCE(Owner, 'None') AS Owner FROM Lots WHERE SQM = ?";
+        }
+
         try {
-            // Finds all row based from the chosen SQM in the Combo Box
             pStatement = con.prepareStatement(getSQM);
-            pStatement.setString(1, sqm);
+
+            if (!sqm.equalsIgnoreCase("All")) {
+                pStatement.setString(1, sqm);
+            }
+
             result = pStatement.executeQuery();
-            
+
             // Finally, display all the rows in the jTable
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,e);
+            JOptionPane.showMessageDialog(null, e);
         }
     }
     
