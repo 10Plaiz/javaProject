@@ -11,7 +11,7 @@ public class Connect {
         Connection con = null;
         try {
             // Connecting the project to the database (local folder here)
-            con = DriverManager.getConnection("jdbc:sqlite:C:/Users/Pocoyo/Documents/NetBeansProjects/ZeldrixVersion/RealEstate.db");
+            con = DriverManager.getConnection("jdbc:sqlite:RealEstate.db");
             return con;
         } catch (SQLException e) {
             System.out.println("Connection Failed" + e);
