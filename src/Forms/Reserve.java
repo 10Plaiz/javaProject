@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import net.proteanit.sql.DbUtils;
 
 /**
@@ -15,8 +16,7 @@ import net.proteanit.sql.DbUtils;
 public class Reserve extends javax.swing.JFrame {
     
     Connection con= Connect.connectdb();
-    PreparedStatement pStatement = null;
-    ResultSet result = null;
+    
     private String userName;
     /**
      * Creates new form Reserve
@@ -45,6 +45,7 @@ public class Reserve extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         homeBtn = new javax.swing.JButton();
         blockBox = new javax.swing.JComboBox<>();
+        reserveLotBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -77,16 +78,25 @@ public class Reserve extends javax.swing.JFrame {
             }
         });
 
+        reserveLotBtn.setText("Reserve Lot");
+        reserveLotBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reserveLotBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(146, Short.MAX_VALUE)
+                .addContainerGap(130, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(132, 132, 132))
+                        .addGap(18, 18, 18)
+                        .addComponent(reserveLotBtn)
+                        .addGap(39, 39, 39))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addGap(323, 323, 323))
@@ -108,8 +118,13 @@ public class Reserve extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(85, 85, 85))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(85, 85, 85))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(reserveLotBtn)
+                        .addGap(231, 231, 231))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -135,65 +150,56 @@ public class Reserve extends javax.swing.JFrame {
 
     public void displayLots() {
         // SQL Statements
-        String data = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'None') AS Owner FROM lots";
+        String data = "SELECT * FROM lots";
         
-        try {
-            // Displays the table
-            pStatement = con.prepareStatement(data);
-            result = pStatement.executeQuery();
+        try (PreparedStatement pStatement = con.prepareStatement(data);
+             ResultSet result = pStatement.executeQuery()) {
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
-            
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace(); //Good practice to print the stack trace for debugging
         }
     }
     
     public void displayLotSize() {
         String lotsize = "SELECT DISTINCT LotSize FROM Lots";
 
-        try {
-            // Get all unique SQM values from the database
-            pStatement = con.prepareStatement(lotsize);
-            result = pStatement.executeQuery();
+        try (PreparedStatement pStatement = con.prepareStatement(lotsize);
+             ResultSet result = pStatement.executeQuery()) {
 
-            // The DefaultComboBoxModel is a placeholder to store all the SQM values
             javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
             model.addElement("Any");
-            
-            // Loop through results and add each SQM to the combo box
+
             while (result.next()) {
                 model.addElement(result.getString("lotsize"));
             }
 
-            // Finally, set the model to the combo box (dropdown)
             sizeBox.setModel(model);
-            
+
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace(); //Good practice to print the stack trace for debugging
         }
     }
     
     public void displayBlock() {
         String block = "SELECT DISTINCT Block FROM Lots";
         
-        try {
-            pStatement = con.prepareStatement(block);
-            result = pStatement.executeQuery();
-            
-            // The DefaultComboBoxModel is a placeholder to store all the SQM values
+        try (PreparedStatement pStatement = con.prepareStatement(block);
+             ResultSet result = pStatement.executeQuery()) {
+
             javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
             model.addElement("Any");
-            
-            // Loop through results and add each SQM to the combo box
+
             while (result.next()) {
                 model.addElement(result.getString("Block"));
             }
 
-            // Finally, set the model to the combo box (dropdown)
             blockBox.setModel(model);
-            
+
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace(); //Good practice to print the stack trace for debugging
         }
     }
     
@@ -217,8 +223,7 @@ public class Reserve extends javax.swing.JFrame {
             }
         }
 
-        try {
-            pStatement = con.prepareStatement(baseQuery);
+        try (PreparedStatement pStatement = con.prepareStatement(baseQuery)) {
 
             int paramIndex = 1;
             if (!"Any".equals(lotsize)) {
@@ -227,12 +232,70 @@ public class Reserve extends javax.swing.JFrame {
             if (!"Any".equals(block)) {
                 pStatement.setString(paramIndex, block);
             }
-            result = pStatement.executeQuery();
-
-            // Display all the rows in the jTable
-            jTable1.setModel(DbUtils.resultSetToTableModel(result));
+            try (ResultSet result = pStatement.executeQuery()) {
+                // Display all the rows in the jTable
+                jTable1.setModel(DbUtils.resultSetToTableModel(result));
+            }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace(); //Good practice to print the stack trace for debugging
+        }
+    }
+    
+    public void reserveLot() {
+        int row = jTable1.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+        
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Please select a lot to reserve.");
+            return;
+        }
+        
+        int idAcc = Integer.parseInt(model.getValueAt(row, 0).toString());
+        
+        String checkOwner = "SELECT Owner FROM Lots WHERE ID = ?";
+        String reserveLot = "UPDATE Lots SET Owner = ? WHERE ID = ?";
+
+        try (PreparedStatement psCheck = con.prepareStatement(checkOwner)) {
+            psCheck.setInt(1, idAcc);
+
+            try (ResultSet rs = psCheck.executeQuery()) {
+                if (rs.next()) {
+                    String owner = rs.getString("Owner");
+
+                    if (owner != null && !owner.isEmpty() && !owner.equals("None")) {
+                        JOptionPane.showMessageDialog(null, "This lot has already been reserved. Please choose another one.");
+                        return; // Important: Exit the method if already reserved
+                    } else {
+                        // Lot is available, proceed with reservation
+                        try (PreparedStatement updateStatement = con.prepareStatement(reserveLot)) {
+                            updateStatement.setString(1, userName);
+                            updateStatement.setInt(2, idAcc);
+
+                            int affectedRows = updateStatement.executeUpdate();
+
+                            if (affectedRows > 0) {
+                                JOptionPane.showMessageDialog(null, "The lot has been reserved!");
+                                displayLots(); // Refresh the table
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Failed to reserve the lot.");
+                            }
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(null, "Error reserving lot: " + ex.getMessage());
+                            ex.printStackTrace();
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Lot not found.");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Error checking owner: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error preparing statement: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -244,6 +307,10 @@ public class Reserve extends javax.swing.JFrame {
         dispose();
         new Menu(userName).setVisible(true);
     }//GEN-LAST:event_homeBtnActionPerformed
+
+    private void reserveLotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveLotBtnActionPerformed
+        reserveLot();
+    }//GEN-LAST:event_reserveLotBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -287,6 +354,7 @@ public class Reserve extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JButton reserveLotBtn;
     private javax.swing.JComboBox<String> sizeBox;
     // End of variables declaration//GEN-END:variables
 }
