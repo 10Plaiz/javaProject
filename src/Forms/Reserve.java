@@ -6,14 +6,34 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import net.proteanit.sql.DbUtils;
+import java.awt.Component;
+import java.awt.Color;
 
 /**
  *
  * @author zeldr
  */
-public class Reserve extends javax.swing.JFrame {
+
+ class CustomCellRenderer extends DefaultTableCellRenderer {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+        if (value != null && value.toString().equals("Available")) {
+            cell.setBackground(new Color(144, 238, 144)); // Set background color for "Available"
+        } else {
+            cell.setBackground(Color.WHITE); // Set background color for other cells
+        }
+
+        return cell;
+    }
+}
+
+ public class Reserve extends javax.swing.JFrame {
     
     Connection con= Connect.connectdb();
     
@@ -27,6 +47,7 @@ public class Reserve extends javax.swing.JFrame {
         displayLots();
         displayLotSize();
         displayBlock();
+        jTable1.getColumnModel().getColumn(6).setCellRenderer(new CustomCellRenderer());
     }
 
     /**
@@ -150,16 +171,19 @@ public class Reserve extends javax.swing.JFrame {
 
     public void displayLots() {
         // SQL Statements
-        String data = "SELECT * FROM lots";
-        
+        String data = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'Available') AS Owner FROM lots";
+
         try {
             PreparedStatement pStatement = con.prepareStatement(data);
             ResultSet result = pStatement.executeQuery();
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
             
+            // Set custom cell renderer for the Owner column
+            jTable1.getColumnModel().getColumn(6).setCellRenderer(new CustomCellRenderer());
+            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
-            e.printStackTrace(); //Good practice to print the stack trace for debugging
+            e.printStackTrace(); // Good practice to print the stack trace for debugging
         }
     }
     
@@ -209,16 +233,16 @@ public class Reserve extends javax.swing.JFrame {
     
     // This method is used for the Search Button
     public void Search() {
-        String baseQuery = "SELECT * FROM Lots";
+        String baseQuery = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'Available') AS Owner FROM lots";
         String lotsize = sizeBox.getSelectedItem().toString();
         String block = blockBox.getSelectedItem().toString();
         boolean hasCondition = false;
-
+    
         if (!"Any".equals(lotsize)) {
             baseQuery += " WHERE LotSize = ?";
             hasCondition = true;
         }
-
+    
         if (!"Any".equals(block)) {
             if (hasCondition) {
                 baseQuery += " AND Block = ?";
@@ -226,10 +250,10 @@ public class Reserve extends javax.swing.JFrame {
                 baseQuery += " WHERE Block = ?";
             }
         }
-
+    
         try {
             PreparedStatement pStatement = con.prepareStatement(baseQuery);
-
+    
             int paramIndex = 1;
             if (!"Any".equals(lotsize)) {
                 pStatement.setString(paramIndex++, lotsize);
@@ -240,6 +264,9 @@ public class Reserve extends javax.swing.JFrame {
             try (ResultSet result = pStatement.executeQuery()) {
                 // Display all the rows in the jTable
                 jTable1.setModel(DbUtils.resultSetToTableModel(result));
+                
+                // Set custom cell renderer for the Owner column
+                jTable1.getColumnModel().getColumn(6).setCellRenderer(new CustomCellRenderer());
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
@@ -249,46 +276,50 @@ public class Reserve extends javax.swing.JFrame {
     
     public void reserveLot() {
         int row = jTable1.getSelectedRow();
-        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
-        
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    
         if (row == -1) {
             JOptionPane.showMessageDialog(null, "Please select a lot to reserve.");
             return;
         }
-        
+    
         int idAcc = Integer.parseInt(model.getValueAt(row, 0).toString());
-        
+    
         String checkOwner = "SELECT Owner FROM Lots WHERE ID = ?";
         String reserveLot = "UPDATE Lots SET Owner = ? WHERE ID = ?";
-
+    
         try {
             PreparedStatement psCheck = con.prepareStatement(checkOwner);
             psCheck.setInt(1, idAcc);
-
+    
             try (ResultSet rs = psCheck.executeQuery()) {
                 if (rs.next()) {
                     String owner = rs.getString("Owner");
-
+    
                     if (owner != null && !owner.isEmpty() && !owner.equals("None")) {
                         JOptionPane.showMessageDialog(null, "This lot has already been reserved. Please choose another one.");
                         return; // Important: Exit the method if already reserved
                     } else {
-                        // Lot is available, proceed with reservation
-                        try (PreparedStatement updateStatement = con.prepareStatement(reserveLot)) {
-                            updateStatement.setString(1, userName);
-                            updateStatement.setInt(2, idAcc);
-
-                            int affectedRows = updateStatement.executeUpdate();
-
-                            if (affectedRows > 0) {
-                                JOptionPane.showMessageDialog(null, "The lot has been reserved!");
-                                displayLots(); // Refresh the table
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Failed to reserve the lot.");
+                        // Lot is available, ask for reservation fee
+                        int response = JOptionPane.showConfirmDialog(null, "Do you want to pay the reservation fee?", "Confirm Reservation", JOptionPane.YES_NO_OPTION);
+                        if (response == JOptionPane.YES_OPTION) {
+                            // User chose to pay the reservation fee, proceed with reservation
+                            try (PreparedStatement updateStatement = con.prepareStatement(reserveLot)) {
+                                updateStatement.setString(1, userName);
+                                updateStatement.setInt(2, idAcc);
+    
+                                int affectedRows = updateStatement.executeUpdate();
+    
+                                if (affectedRows > 0) {
+                                    JOptionPane.showMessageDialog(null, "The lot has been reserved!");
+                                    displayLots(); // Refresh the table
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Failed to reserve the lot.");
+                                }
+                            } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(null, "Error reserving lot: " + ex.getMessage());
+                                ex.printStackTrace();
                             }
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(null, "Error reserving lot: " + ex.getMessage());
-                            ex.printStackTrace();
                         }
                     }
                 } else {
@@ -298,7 +329,7 @@ public class Reserve extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Error checking owner: " + ex.getMessage());
                 ex.printStackTrace();
             }
-
+    
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error preparing statement: " + e.getMessage());
             e.printStackTrace();

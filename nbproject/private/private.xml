@@ -3,9 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Git/javaProject/src/MyApp/App.java</file>
-            <file>file:/C:/Git/javaProject/src/Forms/SignUp.java</file>
-            <file>file:/C:/Git/javaProject/src/Forms/Reserve.java</file>
+            <file>file:/C:/Users/Pocoyo/Documents/NetBeansProjects/PROJECT/javaProject/src/Forms/Reserve.java</file>
+            <file>file:/C:/Users/Pocoyo/Documents/NetBeansProjects/PROJECT/javaProject/src/Database/Delete.java</file>
+            <file>file:/C:/Users/Pocoyo/Documents/NetBeansProjects/PROJECT/javaProject/src/MyApp/App.java</file>
+            <file>file:/C:/Users/Pocoyo/Documents/NetBeansProjects/PROJECT/javaProject/src/Forms/LogIn.java</file>
+            <file>file:/C:/Users/Pocoyo/Documents/NetBeansProjects/PROJECT/javaProject/src/Forms/Menu.java</file>
         </group>
     </open-files>
 </project-private>
