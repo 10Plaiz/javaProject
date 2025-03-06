@@ -174,7 +174,11 @@ public class SignUp extends javax.swing.JFrame implements User {
             ps.setString(1, email.getText());
             rs = ps.executeQuery();
             
-            if(rs.next()) {  // If it returned something
+            if(fName.getText().isBlank() || lName.getText().isBlank() || email.getText().isBlank() || password.getText().isBlank()) {
+                error = "Invalid! A text field is empty.";
+                user = false;
+            }
+            else if(rs.next()) {  // If it returned something
                 error = "Email already exists! Try another email.";
                 user = false; 
             }
