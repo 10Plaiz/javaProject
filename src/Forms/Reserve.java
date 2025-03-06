@@ -152,9 +152,11 @@ public class Reserve extends javax.swing.JFrame {
         // SQL Statements
         String data = "SELECT * FROM lots";
         
-        try (PreparedStatement pStatement = con.prepareStatement(data);
-             ResultSet result = pStatement.executeQuery()) {
+        try {
+            PreparedStatement pStatement = con.prepareStatement(data);
+            ResultSet result = pStatement.executeQuery();
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
+            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
             e.printStackTrace(); //Good practice to print the stack trace for debugging
@@ -164,8 +166,9 @@ public class Reserve extends javax.swing.JFrame {
     public void displayLotSize() {
         String lotsize = "SELECT DISTINCT LotSize FROM Lots";
 
-        try (PreparedStatement pStatement = con.prepareStatement(lotsize);
-             ResultSet result = pStatement.executeQuery()) {
+        try {
+            PreparedStatement pStatement = con.prepareStatement(lotsize);
+            ResultSet result = pStatement.executeQuery();
 
             javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
             model.addElement("Any");
@@ -185,8 +188,9 @@ public class Reserve extends javax.swing.JFrame {
     public void displayBlock() {
         String block = "SELECT DISTINCT Block FROM Lots";
         
-        try (PreparedStatement pStatement = con.prepareStatement(block);
-             ResultSet result = pStatement.executeQuery()) {
+        try {
+            PreparedStatement pStatement = con.prepareStatement(block);
+            ResultSet result = pStatement.executeQuery();
 
             javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
             model.addElement("Any");
@@ -223,7 +227,8 @@ public class Reserve extends javax.swing.JFrame {
             }
         }
 
-        try (PreparedStatement pStatement = con.prepareStatement(baseQuery)) {
+        try {
+            PreparedStatement pStatement = con.prepareStatement(baseQuery);
 
             int paramIndex = 1;
             if (!"Any".equals(lotsize)) {
@@ -256,7 +261,8 @@ public class Reserve extends javax.swing.JFrame {
         String checkOwner = "SELECT Owner FROM Lots WHERE ID = ?";
         String reserveLot = "UPDATE Lots SET Owner = ? WHERE ID = ?";
 
-        try (PreparedStatement psCheck = con.prepareStatement(checkOwner)) {
+        try {
+            PreparedStatement psCheck = con.prepareStatement(checkOwner);
             psCheck.setInt(1, idAcc);
 
             try (ResultSet rs = psCheck.executeQuery()) {

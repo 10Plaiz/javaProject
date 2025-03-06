@@ -161,8 +161,16 @@ public class LogIn extends javax.swing.JFrame implements User {
         } 
         catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
-        }
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                if (con != null) con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         return user;
+        }
     }
     
     private boolean isValidEmail(String email) {
@@ -181,7 +189,7 @@ public class LogIn extends javax.swing.JFrame implements User {
             InetAddress.getByName(domain);
         } catch (UnknownHostException e) {
             return false;
-        }
+        } 
         return true;
     }
     
