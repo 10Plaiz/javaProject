@@ -209,7 +209,7 @@ public class Reserve extends javax.swing.JFrame {
     
     // This method is used for the Search Button
     public void Search() {
-        String baseQuery = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'None') AS Owner FROM Lots";
+        String baseQuery = "SELECT * FROM Lots";
         String lotsize = sizeBox.getSelectedItem().toString();
         String block = blockBox.getSelectedItem().toString();
         boolean hasCondition = false;
@@ -243,7 +243,7 @@ public class Reserve extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
-            e.printStackTrace(); //Good practice to print the stack trace for debugging
+            e.printStackTrace();
         }
     }
     

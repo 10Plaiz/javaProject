@@ -38,6 +38,7 @@ public class Menu extends javax.swing.JFrame {
         welcomeUserName = new javax.swing.JLabel();
         logoutButton = new javax.swing.JButton();
         reserveBtn = new javax.swing.JButton();
+        sellBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,6 +58,13 @@ public class Menu extends javax.swing.JFrame {
             }
         });
 
+        sellBtn.setText("Sell");
+        sellBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sellBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -65,10 +73,14 @@ public class Menu extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(welcomeUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 630, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(logoutButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(reserveBtn, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(480, 480, 480)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(sellBtn)
+                    .addComponent(reserveBtn))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -76,12 +88,15 @@ public class Menu extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(reserveBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 506, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(logoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(welcomeUserName)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(177, 177, 177)
+                        .addComponent(reserveBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sellBtn)
+                        .addGap(0, 319, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -107,9 +122,7 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        // TODO add your handling code here:
         JOptionPane.showMessageDialog(this, "Logged out successfully!");
-        // Closing the current window and then redirecting the user to the login page again
         this.dispose();
         new LogIn().setVisible(true);
     }//GEN-LAST:event_logoutButtonActionPerformed
@@ -118,6 +131,11 @@ public class Menu extends javax.swing.JFrame {
         dispose();
         new Reserve(userName).setVisible(true);
     }//GEN-LAST:event_reserveBtnActionPerformed
+
+    private void sellBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sellBtnActionPerformed
+        dispose();
+        new Sell(userName).setVisible(true);
+    }//GEN-LAST:event_sellBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -158,6 +176,7 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton logoutButton;
     private javax.swing.JButton reserveBtn;
+    private javax.swing.JButton sellBtn;
     private javax.swing.JLabel welcomeUserName;
     // End of variables declaration//GEN-END:variables
 }
