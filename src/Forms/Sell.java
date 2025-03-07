@@ -163,7 +163,7 @@ public class Sell extends javax.swing.JFrame {
     }//GEN-LAST:event_sellButtonActionPerformed
 
     public void displayProperty() {
-        String data = "SELECT * FROM Lots WHERE Owner = ?";
+        String data = "SELECT * FROM Lots WHERE Owner = ? AND status = 'Sold'";
         
         try {
             ps = con.prepareStatement(data);

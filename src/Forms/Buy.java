@@ -133,27 +133,14 @@ public class Buy extends javax.swing.JFrame {
 
         DefaultTableModel model = (DefaultTableModel) reservedLotsTable.getModel();
         int lotId = Integer.parseInt(model.getValueAt(row, 0).toString());
+        double price = Double.parseDouble(model.getValueAt(row, 5).toString());
+        String lot = model.getValueAt(row, 3).toString();
+        String block = model.getValueAt(row, 2).toString();
+        String lotSize = model.getValueAt(row, 4).toString();
+        String sqm = model.getValueAt(row, 1).toString();
 
-        String updateLot = "UPDATE lots SET status = 'Sold', Owner = ? WHERE ID = ?";
-        try {
-            PreparedStatement psUpdate = con.prepareStatement(updateLot);
-            psUpdate.setString(1, userName);
-            psUpdate.setInt(2, lotId);
-
-            int affectedRows = psUpdate.executeUpdate();
-            if (affectedRows > 0) {
-                JOptionPane.showMessageDialog(null, "The lot has been bought successfully!");
-                checkReservedSlots(); // Refresh the table
-
-                // Discard the timer from the reserve JFrame
-                Reserve.cancelReservationTimer(lotId);
-            } else {
-                JOptionPane.showMessageDialog(null, "Failed to buy the lot.");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error buying lot: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // Open the PaymentForm
+        new PaymentForm(userName, lotId, price, lot, block, lotSize, sqm).setVisible(true);
     }//GEN-LAST:event_buyBtnActionPerformed
 
     private void checkReservedSlots() {
