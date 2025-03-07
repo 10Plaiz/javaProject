@@ -188,18 +188,8 @@ public class SignUp extends javax.swing.JFrame implements User {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                if (con != null) con.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        // The sign up will be invalid if the email already exists or if the confirm password is not the same with the password
-        // The sign up will be successful if the email is new and the two password fields are the same.
-        return user;
         }
+        return user;
     }
     
     public void createAccount() {
@@ -223,14 +213,6 @@ public class SignUp extends javax.swing.JFrame implements User {
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                if (con != null) con.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
     

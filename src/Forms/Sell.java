@@ -143,7 +143,7 @@ public class Sell extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         int lotId = Integer.parseInt(model.getValueAt(row, 0).toString());
 
-        String updateQuery = "UPDATE Lots SET Owner = NULL WHERE ID = ?";
+        String updateQuery = "UPDATE lots SET Owner = NULL, status = NULL WHERE ID = ?";
 
         try {
             PreparedStatement psUpdate = con.prepareStatement(updateQuery);

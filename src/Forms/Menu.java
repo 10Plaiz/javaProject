@@ -39,6 +39,7 @@ public class Menu extends javax.swing.JFrame {
         logoutButton = new javax.swing.JButton();
         reserveBtn = new javax.swing.JButton();
         sellBtn = new javax.swing.JButton();
+        buyBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -65,6 +66,13 @@ public class Menu extends javax.swing.JFrame {
             }
         });
 
+        buyBtn.setText("Buy");
+        buyBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buyBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -77,9 +85,11 @@ public class Menu extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(480, 480, 480)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(sellBtn)
-                    .addComponent(reserveBtn))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buyBtn)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(sellBtn)
+                        .addComponent(reserveBtn)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -94,9 +104,11 @@ public class Menu extends javax.swing.JFrame {
                         .addComponent(welcomeUserName)
                         .addGap(177, 177, 177)
                         .addComponent(reserveBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(sellBtn)
-                        .addGap(0, 319, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(buyBtn)
+                        .addGap(0, 266, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -137,6 +149,12 @@ public class Menu extends javax.swing.JFrame {
         new Sell(userName).setVisible(true);
     }//GEN-LAST:event_sellBtnActionPerformed
 
+    private void buyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyBtnActionPerformed
+        // TODO add your handling code here:
+        dispose();
+        new Buy(userName).setVisible(true);
+    }//GEN-LAST:event_buyBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -173,6 +191,7 @@ public class Menu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buyBtn;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton logoutButton;
     private javax.swing.JButton reserveBtn;

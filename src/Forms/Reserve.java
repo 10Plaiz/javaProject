@@ -12,6 +12,11 @@ import javax.swing.table.DefaultTableModel;
 import net.proteanit.sql.DbUtils;
 import java.awt.Component;
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -24,9 +29,13 @@ import java.awt.Color;
         Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
         if (value != null && value.toString().equals("Available")) {
-            cell.setBackground(new Color(144, 238, 144)); // Set background color for "Available"
+            cell.setBackground(new Color(144, 238, 144)); // Light green
+        } else if (value != null && value.toString().equals("Reserved")) {
+            cell.setBackground(new Color(255, 255, 153)); // Light yellow
+        } else if (value != null && value.toString().equals("Sold")) {
+            cell.setBackground(new Color(255, 102, 102)); // Light red
         } else {
-            cell.setBackground(Color.WHITE); // Set background color for other cells
+            cell.setBackground(Color.WHITE); // Default background color
         }
 
         return cell;
@@ -38,6 +47,7 @@ import java.awt.Color;
     Connection con= Connect.connectdb();
     
     private String userName;
+    private static HashMap<Integer, Timer> reservationTimers = new HashMap<>();
     /**
      * Creates new form Reserve
      */
@@ -171,7 +181,11 @@ import java.awt.Color;
 
     public void displayLots() {
         // SQL Statements
-        String data = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'Available') AS Owner FROM lots";
+        String data = "SELECT ID, SQM, Block, Lot, LotSize, Price, " +
+        "CASE WHEN status = 'Sold' THEN 'Sold' " +
+        "WHEN Owner IS NOT NULL AND Owner != '' THEN 'Reserved' " +
+        "ELSE 'Available' END AS Owner " +
+        "FROM lots";
 
         try {
             PreparedStatement pStatement = con.prepareStatement(data);
@@ -233,7 +247,11 @@ import java.awt.Color;
     
     // This method is used for the Search Button
     public void Search() {
-        String baseQuery = "SELECT ID, SQM, Block, Lot, LotSize, Price, COALESCE(Owner, 'Available') AS Owner FROM lots";
+        String baseQuery = "SELECT ID, SQM, Block, Lot, LotSize, Price, " +
+        "CASE WHEN status = 'Sold' THEN 'Sold' " +
+        "WHEN Owner IS NOT NULL AND Owner != '' THEN 'Reserved' " +
+        "ELSE 'Available' END AS Owner " +
+        "FROM lots";
         String lotsize = sizeBox.getSelectedItem().toString();
         String block = blockBox.getSelectedItem().toString();
         boolean hasCondition = false;
@@ -277,25 +295,32 @@ import java.awt.Color;
     public void reserveLot() {
         int row = jTable1.getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    
+
         if (row == -1) {
             JOptionPane.showMessageDialog(null, "Please select a lot to reserve.");
             return;
         }
-    
+
         int idAcc = Integer.parseInt(model.getValueAt(row, 0).toString());
-    
-        String checkOwner = "SELECT Owner FROM Lots WHERE ID = ?";
-        String reserveLot = "UPDATE Lots SET Owner = ? WHERE ID = ?";
-    
+
+        String checkOwner = "SELECT Owner, status FROM Lots WHERE ID = ?";
+        String reserveLot = "UPDATE lots SET Owner = ?, status = 'Reserved' WHERE ID = ?";
+        String insertReservation = "INSERT INTO Reservation (SQM, block_id, lot_id, lot_type, account_id, reserved_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         try {
             PreparedStatement psCheck = con.prepareStatement(checkOwner);
             psCheck.setInt(1, idAcc);
-    
+
             try (ResultSet rs = psCheck.executeQuery()) {
                 if (rs.next()) {
                     String owner = rs.getString("Owner");
-    
+                    String status = rs.getString("status");
+
+                    if ("Sold".equals(status)) {
+                        JOptionPane.showMessageDialog(null, "This lot is already sold. Please choose another one.");
+                        return; // Important: Exit the method if already sold
+                    }
+
                     if (owner != null && !owner.isEmpty() && !owner.equals("None")) {
                         JOptionPane.showMessageDialog(null, "This lot has already been reserved. Please choose another one.");
                         return; // Important: Exit the method if already reserved
@@ -304,15 +329,48 @@ import java.awt.Color;
                         int response = JOptionPane.showConfirmDialog(null, "Do you want to pay the reservation fee?", "Confirm Reservation", JOptionPane.YES_NO_OPTION);
                         if (response == JOptionPane.YES_OPTION) {
                             // User chose to pay the reservation fee, proceed with reservation
-                            try (PreparedStatement updateStatement = con.prepareStatement(reserveLot)) {
+                            try (PreparedStatement updateStatement = con.prepareStatement(reserveLot);
+                                 PreparedStatement insertStatement = con.prepareStatement(insertReservation)) {
                                 updateStatement.setString(1, userName);
                                 updateStatement.setInt(2, idAcc);
-    
+
                                 int affectedRows = updateStatement.executeUpdate();
-    
+
                                 if (affectedRows > 0) {
+                                    // Insert reservation details into the Reservation table
+                                    String sqm = model.getValueAt(row, 1).toString();
+                                    String block = model.getValueAt(row, 2).toString();
+                                    String lot = model.getValueAt(row, 3).toString();
+                                    String lotSize = model.getValueAt(row, 4).toString();
+                                    String accountId = getAccountId(userName); // Implement this method to get the account ID of the user
+
+                                    Timestamp reservedAt = new Timestamp(System.currentTimeMillis());
+                                    Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + 2 * 60 * 1000); // 2 minutes later
+
+                                    insertStatement.setString(1, sqm);
+                                    insertStatement.setString(2, block);
+                                    insertStatement.setString(3, lot);
+                                    insertStatement.setString(4, lotSize);
+                                    insertStatement.setString(5, accountId);
+                                    insertStatement.setTimestamp(6, reservedAt);
+                                    insertStatement.setTimestamp(7, expiresAt);
+
+                                    insertStatement.executeUpdate();
+
                                     JOptionPane.showMessageDialog(null, "The lot has been reserved!");
                                     displayLots(); // Refresh the table
+
+                                    // Schedule a task to check if the lot was bought within 2 minutes
+                                    Timer timer = new Timer();
+                                    timer.schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            checkReservationExpiration(idAcc);
+                                        }
+                                    }, 2 * 60 * 1000);
+
+                                    // Add the timer to the reservationTimers map
+                                    addReservationTimer(idAcc, timer);
                                 } else {
                                     JOptionPane.showMessageDialog(null, "Failed to reserve the lot.");
                                 }
@@ -329,10 +387,77 @@ import java.awt.Color;
                 JOptionPane.showMessageDialog(null, "Error checking owner: " + ex.getMessage());
                 ex.printStackTrace();
             }
-    
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error preparing statement: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+    
+    private void checkReservationExpiration(int lotId) {
+        String checkReservation = "SELECT Owner FROM Lots WHERE ID = ?";
+        String updateLot = "UPDATE Lots SET Owner = NULL, status = NULL WHERE ID = ?";
+
+        try {
+            PreparedStatement psCheck = con.prepareStatement(checkReservation);
+            psCheck.setInt(1, lotId);
+
+            try (ResultSet rs = psCheck.executeQuery()) {
+                if (rs.next()) {
+                    String owner = rs.getString("Owner");
+
+                    if (owner != null && owner.equals(userName)) {
+                        // Reservation expired, update the lot status
+                        try (PreparedStatement updateStatement = con.prepareStatement(updateLot)) {
+                            updateStatement.setInt(1, lotId);
+                            updateStatement.executeUpdate();
+                            displayLots(); // Refresh the table
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private String getAccountId(String userName) {
+        String accountId = null;
+        String query = "SELECT id FROM accounts WHERE fname = ?"; // Adjust the table and column names as per your database schema
+
+        try {
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, userName);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    accountId = rs.getString("id");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Error fetching account ID: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error preparing statement: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return accountId;
+    }
+    
+    public static void addReservationTimer(int lotId, Timer timer) {
+        reservationTimers.put(lotId, timer);
+    }
+    
+        public static void cancelReservationTimer(int lotId) {
+        Timer timer = reservationTimers.get(lotId);
+        if (timer != null) {
+            timer.cancel();
+            reservationTimers.remove(lotId);
         }
     }
     
