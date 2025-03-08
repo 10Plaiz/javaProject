@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
  */
 public class PaymentFormReceipt extends javax.swing.JFrame {
     // Instance variables (add new ones to match your parameters)
-    private String userName;
+    private int userID;
     private String firstName;
     private String lastName;
     private String paymentMethod;
@@ -36,7 +36,7 @@ public class PaymentFormReceipt extends javax.swing.JFrame {
 
     // Constructor with corrected parameter assignments
     public PaymentFormReceipt(
-        String userName,
+        int userID,
         String firstName, 
         String lastName, 
         String paymentMethod, 
@@ -50,7 +50,7 @@ public class PaymentFormReceipt extends javax.swing.JFrame {
         String accountId
     ) {
         // Assign parameters to instance variables
-        this.userName = userName;
+        this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
         this.paymentMethod = paymentMethod;
@@ -78,7 +78,6 @@ public class PaymentFormReceipt extends javax.swing.JFrame {
         blockField.setText(block);
         lotTypeField.setText(lotSize);
         sqmField.setText(sqm);
-        
     }
     
 
@@ -345,34 +344,10 @@ public class PaymentFormReceipt extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_blockFieldActionPerformed
 
-    // HAAAAAAAAAAAAAATERRRRRRSSSSS
-    private String getAccountId(String userName) {
-        String accountId = null;
-        String query = "SELECT id FROM accounts WHERE fname = ?"; // Adjust the table and column names as per your database schema
-
-        try {
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, userName);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    accountId = rs.getString("id");
-                }
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Error fetching account ID: " + ex.getMessage());
-                ex.printStackTrace();
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error preparing statement: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return accountId;
-    }
-    
+    // HAAAAAAAAAAAAAATERRRRRRSSSSS    
     private void menuBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuBtnActionPerformed
         dispose();
-        new Buy(userName).setVisible(true);
+        new Buy(userID).setVisible(true);
     }//GEN-LAST:event_menuBtnActionPerformed
 
     private void calculatedPriceFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calculatedPriceFieldActionPerformed
@@ -419,15 +394,21 @@ public class PaymentFormReceipt extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 //Example parameters
-                String userName = "John Doe";
+                // Example parameters
+                int userID = 1;
+                String firstName = "Leee";
+                String lastName = "Jimenez";
+                String paymentMethod = "Credit Card";
+                String yearsToPay = "5";
+                double calculatedPrice = 50000.00;
                 int lotId = 123;
-                double price = 50000.00;
+                String sqm = "150";
                 String lot = "A10";
                 String block = "Block 5";
                 String lotSize = "150 sqm";
-                String sqm = "150";
+                String accountId = "1";
 
-                new PaymentForm(userName, lotId, price, lot, block, lotSize, sqm).setVisible(true);
+                new PaymentFormReceipt(userID, firstName, lastName, paymentMethod, yearsToPay, calculatedPrice, lotId, sqm, lot, block, lotSize, accountId).setVisible(true);
             }
         });
     }

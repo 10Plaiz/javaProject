@@ -24,12 +24,12 @@ public class Buy extends javax.swing.JFrame {
     PreparedStatement ps = null;
     ResultSet rs = null;
 
-    private String userName;
+    private int userID;
     /**
      * Creates new form Buy
      */
-    public Buy(String userName) {
-        this.userName = userName;
+    public Buy(int userID) {
+        this.userID = userID;
         initComponents();
         checkReservedSlots();
     }
@@ -121,7 +121,7 @@ public class Buy extends javax.swing.JFrame {
     private void homeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBtnActionPerformed
         // TODO add your handling code here:
         dispose();
-        new Menu(userName).setVisible(true);
+        new Menu(userID).setVisible(true);
     }//GEN-LAST:event_homeBtnActionPerformed
 
     private void buyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyBtnActionPerformed
@@ -139,21 +139,32 @@ public class Buy extends javax.swing.JFrame {
         String lotSize = model.getValueAt(row, 4).toString();
         String sqm = model.getValueAt(row, 1).toString();
 
+        // Clear the reserved_by column in the database
+        String clearReservation = "UPDATE lots SET reserved_by = NULL WHERE ID = ?";
+        try (PreparedStatement psClear = con.prepareStatement(clearReservation)) {
+            psClear.setInt(1, lotId);
+            psClear.executeUpdate();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
         // Open the PaymentForm
         dispose();
-        new PaymentForm(userName, lotId, price, lot, block, lotSize, sqm).setVisible(true);
+        new PaymentForm(userID, lotId, price, lot, block, lotSize, sqm).setVisible(true);
     }//GEN-LAST:event_buyBtnActionPerformed
 
     private void checkReservedSlots() {
-        String query = "SELECT ID, SQM, Block, Lot, LotSize, Price FROM Lots WHERE Owner = ? AND status = 'Reserved'";
+        String query = "SELECT ID, SQM, Block, Lot, LotSize, Price FROM Lots WHERE reserved_by = ? AND status = 'Reserved'";
         try {
             PreparedStatement pStatement = con.prepareStatement(query);
-            pStatement.setString(1, userName);
+            pStatement.setInt(1, userID);
             ResultSet result = pStatement.executeQuery();
-    
+
             DefaultTableModel model = new DefaultTableModel(new String[]{"ID", "SQM", "Block", "Lot", "LotSize", "Price"}, 0);
             boolean hasReservedLots = false;
-    
+
             while (result.next()) {
                 hasReservedLots = true;
                 model.addRow(new Object[]{
@@ -165,7 +176,7 @@ public class Buy extends javax.swing.JFrame {
                     result.getDouble("Price")
                 });
             }
-    
+
             if (hasReservedLots) {
                 reservedLotsTable.setModel(model);
                 reservedLotsTable.setVisible(true);
@@ -211,7 +222,7 @@ public class Buy extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Buy("User Name").setVisible(true);
+                new Buy(1).setVisible(true);
             }
         });
     }

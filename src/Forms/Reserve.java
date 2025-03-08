@@ -22,7 +22,8 @@ import java.text.SimpleDateFormat;
  *
  * @author zeldr
  */
-
+ 
+ // Changes the background cell of the jtable based on the value of the cell
  class CustomCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -43,16 +44,16 @@ import java.text.SimpleDateFormat;
 }
 
  public class Reserve extends javax.swing.JFrame {
-    
     Connection con= Connect.connectdb();
-    
+    private int userID;
     private String userName;
     private static HashMap<Integer, Timer> reservationTimers = new HashMap<>();
     /**
      * Creates new form Reserve
      */
-    public Reserve(String userName) {
-        this.userName = userName;
+    public Reserve(int userID) {
+        this.userID = userID;
+        this.userName = getUserNameById(userID);
         initComponents();
         displayLots();
         displayLotSize();
@@ -198,20 +199,46 @@ import java.text.SimpleDateFormat;
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    public String getUserNameById(int userID) {
+        String query = "SELECT fname FROM accounts WHERE id = ?";
+        String userName = null;
+
+        try {
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, userID);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    userName = rs.getString("fname");
+                } else {
+                    throw new Exception("No user found for ID: " + userID);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Error fetching username: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error preparing statement: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return userName;
+    }
+
     public void displayLots() {
         // SQL Statements
         String data = "SELECT ID, SQM, Block, Lot, LotSize, Price, " +
         "CASE WHEN status = 'Sold' THEN 'Sold' " +
-        "WHEN Owner IS NOT NULL AND Owner != '' THEN 'Reserved' " +
-        "ELSE 'Available' END AS Owner " +
+        "WHEN reserved_by IS NOT NULL AND reserved_by != '' THEN 'Reserved' " +
+        "ELSE 'Available' END AS status " +
         "FROM lots";
-
+    
         try {
             PreparedStatement pStatement = con.prepareStatement(data);
             ResultSet result = pStatement.executeQuery();
             jTable1.setModel(DbUtils.resultSetToTableModel(result));
             
-            // Set custom cell renderer for the Owner column
+            // Set custom cell renderer for the status column
             jTable1.getColumnModel().getColumn(6).setCellRenderer(new CustomCellRenderer());
             
         } catch (Exception e) {
@@ -312,113 +339,113 @@ import java.text.SimpleDateFormat;
     }
     
     public void reserveLot() {
-    int row = jTable1.getSelectedRow();
-    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-
-    if (row == -1) {
-        JOptionPane.showMessageDialog(null, "Please select a lot to reserve.");
-        return;
-    }
-
-    int idAcc = Integer.parseInt(model.getValueAt(row, 0).toString());
-
-    String checkOwner = "SELECT Owner, status FROM Lots WHERE ID = ?";
-    String reserveLot = "UPDATE lots SET Owner = ?, status = 'Reserved' WHERE ID = ?";
-    String insertReservation = "INSERT INTO record (SQM, block_id, lot_id, lot_type, account_id, reserved_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-    try (PreparedStatement psCheck = con.prepareStatement(checkOwner)) {
-        psCheck.setInt(1, idAcc);
-
-        try (ResultSet rs = psCheck.executeQuery()) {
-            if (rs.next()) {
-                String owner = rs.getString("Owner");
-                String status = rs.getString("status");
-
-                if ("Sold".equals(status)) {
-                    JOptionPane.showMessageDialog(null, "This lot is already sold. Please choose another one.");
-                    return;
-                }
-
-                if (owner != null && !owner.isEmpty() && !owner.equals("None")) {
-                    JOptionPane.showMessageDialog(null, "This lot has already been reserved. Please choose another one.");
-                    return;
-                }
-
-                int response = JOptionPane.showConfirmDialog(null, 
-                    "Do you want to pay the reservation fee?", 
-                    "Confirm Reservation", 
-                    JOptionPane.YES_NO_OPTION);
-                
-                if (response == JOptionPane.YES_OPTION) {
-                    try (PreparedStatement updateStatement = con.prepareStatement(reserveLot);
-                         PreparedStatement insertStatement = con.prepareStatement(insertReservation)) {
-                        
-                        // Update lot reservation
-                        updateStatement.setString(1, userName);
-                        updateStatement.setInt(2, idAcc);
-                        int affectedRows = updateStatement.executeUpdate();
-
-                        if (affectedRows > 0) {
-                            // Insert reservation record
-                            String sqm = model.getValueAt(row, 1).toString();
-                            String block = model.getValueAt(row, 2).toString();
-                            String lot = model.getValueAt(row, 3).toString();
-                            String lotSize = model.getValueAt(row, 4).toString();
-                            String accountId = getAccountId(userName);
-
-                            Timestamp reservedAt = new Timestamp(System.currentTimeMillis());
-                            Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + 2 * 60 * 1000);
-
-                            insertStatement.setString(1, sqm);
-                            insertStatement.setString(2, block);
-                            insertStatement.setString(3, lot);
-                            insertStatement.setString(4, lotSize);
-                            insertStatement.setString(5, accountId);
-                            insertStatement.setTimestamp(6, reservedAt);
-                            insertStatement.setTimestamp(7, expiresAt);
-                            insertStatement.executeUpdate();
-
-                            JOptionPane.showMessageDialog(null, "The lot has been reserved!");
-                            displayLots();
-
-                            // Schedule expiration check
-                            Timer timer = new Timer();
-                            timer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    checkReservationExpiration(idAcc);
-                                }
-                            }, 2 * 60 * 1000);
-                            addReservationTimer(idAcc, timer);
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Failed to reserve the lot.");
+        int row = jTable1.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "Please select a lot to reserve.");
+            return;
+        }
+    
+        int idAcc = Integer.parseInt(model.getValueAt(row, 0).toString());
+    
+        String checkOwner = "SELECT reserved_by, status FROM Lots WHERE ID = ?";
+        String reserveLot = "UPDATE lots SET reserved_by = ?, status = 'Reserved' WHERE ID = ?";
+        String insertReservation = "INSERT INTO record (SQM, block_id, lot_id, lot_type, account_id, reserved_at, expires_at, transaction_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    
+        try (PreparedStatement psCheck = con.prepareStatement(checkOwner)) {
+            psCheck.setInt(1, idAcc);
+    
+            try (ResultSet rs = psCheck.executeQuery()) {
+                if (rs.next()) {
+                    String reservedBy = rs.getString("reserved_by");
+                    String status = rs.getString("status");
+    
+                    if ("Sold".equals(status)) {
+                        JOptionPane.showMessageDialog(null, "This lot is already sold. Please choose another one.");
+                        return;
+                    }
+    
+                    if (reservedBy != null && !reservedBy.isEmpty() && !reservedBy.equals("None")) {
+                        JOptionPane.showMessageDialog(null, "This lot has already been reserved. Please choose another one.");
+                        return;
+                    }
+    
+                    int response = JOptionPane.showConfirmDialog(null, 
+                        "Do you want to pay the reservation fee?", 
+                        "Confirm Reservation", 
+                        JOptionPane.YES_NO_OPTION);
+                    
+                    if (response == JOptionPane.YES_OPTION) {
+                        try (PreparedStatement updateStatement = con.prepareStatement(reserveLot);
+                             PreparedStatement insertStatement = con.prepareStatement(insertReservation)) {
+                            
+                            // Update lot reservation
+                            updateStatement.setInt(1, userID);
+                            updateStatement.setInt(2, idAcc);
+                            int affectedRows = updateStatement.executeUpdate();
+    
+                            if (affectedRows > 0) {
+                                // Insert reservation record
+                                String sqm = model.getValueAt(row, 1).toString();
+                                String block = model.getValueAt(row, 2).toString();
+                                String lot = model.getValueAt(row, 3).toString();
+                                String lotSize = model.getValueAt(row, 4).toString();
+                                String accountId = String.valueOf(userID);
+    
+                                Timestamp reservedAt = new Timestamp(System.currentTimeMillis());
+                                Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + 2 * 60 * 1000);
+    
+                                insertStatement.setString(1, sqm);
+                                insertStatement.setString(2, block);
+                                insertStatement.setString(3, lot);
+                                insertStatement.setString(4, lotSize);
+                                insertStatement.setString(5, accountId);
+                                insertStatement.setTimestamp(6, reservedAt);
+                                insertStatement.setTimestamp(7, expiresAt);
+                                insertStatement.setString(8, "Reservation");
+                                insertStatement.executeUpdate();
+    
+                                JOptionPane.showMessageDialog(null, "The lot has been reserved!");
+                                displayLots();
+    
+                                // Schedule expiration check
+                                Timer timer = new Timer();
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        checkReservationExpiration(idAcc);
+                                    }
+                                }, 2 * 60 * 1000);
+                                addReservationTimer(idAcc, timer);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Failed to reserve the lot.");
+                            }
                         }
                     }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Lot not found.");
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "Lot not found.");
             }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Database error: " + ex.getMessage());
+            ex.printStackTrace();
         }
-    } catch (Exception ex) {
-        JOptionPane.showMessageDialog(null, "Database error: " + ex.getMessage());
-        ex.printStackTrace();
     }
-}
-
     
     private void checkReservationExpiration(int lotId) {
-        String checkReservation = "SELECT Owner FROM Lots WHERE ID = ?";
-        String updateLot = "UPDATE Lots SET Owner = NULL, status = NULL WHERE ID = ?";
-
+        String checkReservation = "SELECT reserved_by FROM Lots WHERE ID = ?";
+        String updateLot = "UPDATE Lots SET reserved_by = NULL, status = NULL WHERE ID = ?";
+    
         try {
             PreparedStatement psCheck = con.prepareStatement(checkReservation);
             psCheck.setInt(1, lotId);
-
+    
             try (ResultSet rs = psCheck.executeQuery()) {
                 if (rs.next()) {
-                    String owner = rs.getString("Owner");
-
-                    if (owner != null && owner.equals(userName)) {
+                    String reservedBy = rs.getString("reserved_by");
+    
+                    if (reservedBy != null && reservedBy.equals(userName)) {
                         // Reservation expired, update the lot status
                         try (PreparedStatement updateStatement = con.prepareStatement(updateLot)) {
                             updateStatement.setInt(1, lotId);
@@ -481,7 +508,7 @@ import java.text.SimpleDateFormat;
 
     private void homeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBtnActionPerformed
         dispose();
-        new Menu(userName).setVisible(true);
+        new Menu(userID).setVisible(true);
     }//GEN-LAST:event_homeBtnActionPerformed
 
     private void reserveLotBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveLotBtnActionPerformed
@@ -518,7 +545,7 @@ import java.text.SimpleDateFormat;
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Reserve("User Name").setVisible(true);
+                new Reserve(1).setVisible(true);
             }
         });
     }

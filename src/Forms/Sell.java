@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-
 import net.proteanit.sql.DbUtils;
 
 /**
@@ -18,12 +17,12 @@ public class Sell extends javax.swing.JFrame {
     PreparedStatement ps = null;
     ResultSet rs = null;
 
-    private String userName;
+    private int userID;
     /**
      * Creates new form Sell
      */
-    public Sell(String userName) {
-        this.userName = userName;
+    public Sell(int userID) {
+        this.userID = userID;
         initComponents();
         displayProperty();
     }
@@ -129,7 +128,7 @@ public class Sell extends javax.swing.JFrame {
     private void homeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBtnActionPerformed
         // Back to the menu passing the username
         dispose();
-        new Menu(userName).setVisible(true);
+        new Menu(userID).setVisible(true);
     }//GEN-LAST:event_homeBtnActionPerformed
 
     private void sellButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sellButtonActionPerformed
@@ -163,11 +162,11 @@ public class Sell extends javax.swing.JFrame {
     }//GEN-LAST:event_sellButtonActionPerformed
 
     public void displayProperty() {
-        String data = "SELECT * FROM Lots WHERE Owner = ? AND status = 'Sold'";
+        String data = "SELECT * FROM Lots WHERE Owner = (SELECT fname FROM ACCOUNTS WHERE id = ?)";
         
         try {
             ps = con.prepareStatement(data);
-            ps.setString(1, userName);
+            ps.setInt(1, userID);
             rs = ps.executeQuery();
             jTable1.setModel(DbUtils.resultSetToTableModel(rs));
             
@@ -207,7 +206,7 @@ public class Sell extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Sell("User Name").setVisible(true);
+                new Sell(1).setVisible(true);
             }
         });
     }

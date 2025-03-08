@@ -139,29 +139,28 @@ public class LogIn extends javax.swing.JFrame implements User {
 
     @Override
     public boolean validateUser() {
-        String login = "SELECT * FROM ACCOUNTS WHERE EMAIL = ? AND PASSWORD = ?";
+        String login = "SELECT id, fname FROM ACCOUNTS WHERE EMAIL = ? AND PASSWORD = ?";
         boolean user = false;
-        
+    
         try {
             PasswordHasher hash = new PasswordHasher();
-            
+    
             // Getting the email and password from the form, then verifying it through the database
             ps = con.prepareStatement(login);
             ps.setString(1, email.getText());
             ps.setString(2, hash.hashPassword(password.getText()));
             rs = ps.executeQuery();
-            
+    
             // If there is an existing email and password, returns true, if not, there is no account for that and returns false
-            if(rs.next()) {
+            if (rs.next()) {
                 user = true;
+                userID = rs.getInt("id"); // Retrieve user ID
                 userName = rs.getString("fname");
                 System.out.println(userName);
-            }
-            else {
+            } else {
                 user = false;
             }
-        } 
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
         } finally {
             try {
@@ -171,8 +170,8 @@ public class LogIn extends javax.swing.JFrame implements User {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        return user;
         }
+        return user;
     }
     
     private boolean isValidEmail(String email) {
@@ -214,7 +213,7 @@ public class LogIn extends javax.swing.JFrame implements User {
         if (user) {
             JOptionPane.showMessageDialog(null, "Sign In Successful!");
             dispose();
-            new Menu(userName).setVisible(true);
+            new Menu(userID).setVisible(true); // Pass userID instead of userName
         } else {
             JOptionPane.showMessageDialog(null, "The email or the password is incorrect.");
         }

@@ -15,25 +15,18 @@ import net.proteanit.sql.DbUtils;
  * @author zeldr
  */
 public class Menu extends javax.swing.JFrame {
-    Connection con= Connect.connectdb();
+    Connection con = Connect.connectdb();
     PreparedStatement pStatement = null;
     ResultSet result = null;
     private String userName;
     private int userID;
 
-    public Menu(String userName) {
-        this.userName = userName;
-        initComponents();
-        welcomeUserName.setText("Welcome, " + userName + "!");
-    }
-    
-    // If you want to make it receive the userID, replace this Constructor with the current Contructor above:
-    /*public Menu(int userID) {
+    public Menu(int userID) {
         this.userID = userID;
         initComponents();
         UserID id = new UserID(userID);
         welcomeUserName.setText("Welcome, " + id.getUserName() + "!");
-    } */
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -151,18 +144,18 @@ public class Menu extends javax.swing.JFrame {
 
     private void reserveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveBtnActionPerformed
         dispose();
-        new Reserve(userName).setVisible(true);
+        new Reserve(userID).setVisible(true);
     }//GEN-LAST:event_reserveBtnActionPerformed
 
     private void sellBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sellBtnActionPerformed
         dispose();
-        new Sell(userName).setVisible(true);
+        new Sell(userID).setVisible(true);
     }//GEN-LAST:event_sellBtnActionPerformed
 
     private void buyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyBtnActionPerformed
         // TODO add your handling code here:
         dispose();
-        new Buy(userName).setVisible(true);
+        new Buy(userID).setVisible(true);
     }//GEN-LAST:event_buyBtnActionPerformed
 
     /**
@@ -195,7 +188,7 @@ public class Menu extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Menu("User Name").setVisible(true);
+                new Menu(1).setVisible(true);
             }
         });
     }

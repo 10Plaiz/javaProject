@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  * @author Pocoyo
  */
 public class PaymentForm extends javax.swing.JFrame {
-    private String userName;
+    private int userID;
     private int lotId;
     private double price;
     
@@ -26,8 +26,8 @@ public class PaymentForm extends javax.swing.JFrame {
     /**
      * Creates new form PaymentForm
      */
-    public PaymentForm(String userName, int lotId, double price, String lot, String block, String lotSize, String sqm) {
-        this.userName = userName;
+    public PaymentForm(int userID, int lotId, double price, String lot, String block, String lotSize, String sqm) {
+        this.userID = userID;
         this.lotId = lotId;
         this.price = price;
         initComponents();
@@ -327,33 +327,9 @@ public class PaymentForm extends javax.swing.JFrame {
     }//GEN-LAST:event_blockFieldActionPerformed
 
     // HAAAAAAAAAAAAAATERRRRRRSSSSS
-    private String getAccountId(String userName) {
-        String accountId = null;
-        String query = "SELECT id FROM accounts WHERE fname = ?"; // Adjust the table and column names as per your database schema
-
-        try {
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, userName);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    accountId = rs.getString("id");
-                }
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Error fetching account ID: " + ex.getMessage());
-                ex.printStackTrace();
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error preparing statement: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return accountId;
-    }
-    
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
-        new Buy(userName).setVisible(true);
+        new Buy(userID).setVisible(true);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
@@ -366,29 +342,24 @@ public class PaymentForm extends javax.swing.JFrame {
         String lot = lotField.getText();
         String block = blockField.getText();
         String lotSize = lotTypeField.getText();
-        String accountId = getAccountId(userName); // Implement this method to get the account ID of the user
-
-        // This doesn't work properly, even if they are the same this if else still runs
-        /* if (firstName != userName) {
-            JOptionPane.showMessageDialog(null, "The inserted first name is not the same with the signed in user.");
-            return;
-        } */
+        int accountId = userID; // Use userID directly as accountId
+    
         if (firstName.isEmpty() || lastName.isEmpty() || calculatedPriceField.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Please fill in all required fields.");
             return;
         }
-
+    
         String updateLot = "UPDATE lots SET status = 'Sold', Owner = ? WHERE ID = ?";
         String insertTransaction = "INSERT INTO record (sqm, block_id, lot_id, lot_type, account_id, price, transaction_type, bought_at, payment_method, years_to_pay) VALUES (?, ?, ?, ?, ?, ?, 'Buying', ?, ?, ?)";
-
+    
         PreparedStatement psUpdate = null;
         PreparedStatement psInsert = null;
-
+    
         try {
             psUpdate = con.prepareStatement(updateLot);
-            psUpdate.setString(1, userName);
+            psUpdate.setString(1, firstName);
             psUpdate.setInt(2, lotId);
-
+    
             int affectedRows = psUpdate.executeUpdate();
             if (affectedRows > 0) {
                 psInsert = con.prepareStatement(insertTransaction);
@@ -396,18 +367,18 @@ public class PaymentForm extends javax.swing.JFrame {
                 psInsert.setString(2, block);
                 psInsert.setInt(3, lotId);
                 psInsert.setString(4, lotSize);
-                psInsert.setString(5, accountId);
+                psInsert.setInt(5, accountId); // Use userID directly as accountId
                 psInsert.setDouble(6, calculatedPrice);
                 psInsert.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
                 psInsert.setString(8, paymentMethod);
                 psInsert.setString(9, yearsToPay);
-
+    
                 psInsert.executeUpdate();
-
+    
                 JOptionPane.showMessageDialog(null, "The lot has been bought successfully!");
                 Reserve.cancelReservationTimer(lotId); // Discard the timer from the reserve JFrame
                 dispose();
-                new PaymentFormReceipt(userName, firstName, lastName, paymentMethod, yearsToPay, calculatedPrice, lotId, sqm, lot, block,lotSize, accountId).setVisible(true);
+                new PaymentFormReceipt(userID, firstName, lastName, paymentMethod, yearsToPay, calculatedPrice, lotId, sqm, lot, block, lotSize, String.valueOf(accountId)).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(null, "Failed to buy the lot.");
             }
@@ -493,7 +464,7 @@ public class PaymentForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PaymentForm("User Name", 1, 100000, "Lot 1", "Block A", "Lot Size", "100").setVisible(true);
+                new PaymentForm(1, 1, 100000, "Sample Lot", "Sample Block", "Sample Lot Size", "100").setVisible(true);
             }
         });
     }
