@@ -140,6 +140,7 @@ public class Buy extends javax.swing.JFrame {
         String sqm = model.getValueAt(row, 1).toString();
 
         // Open the PaymentForm
+        dispose();
         new PaymentForm(userName, lotId, price, lot, block, lotSize, sqm).setVisible(true);
     }//GEN-LAST:event_buyBtnActionPerformed
 

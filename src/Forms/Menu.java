@@ -21,19 +21,19 @@ public class Menu extends javax.swing.JFrame {
     private String userName;
     private int userID;
 
-    public Menu(String userIName) {
+    public Menu(String userName) {
         this.userName = userName;
         initComponents();
         welcomeUserName.setText("Welcome, " + userName + "!");
     }
     
     // If you want to make it receive the userID, replace this Constructor with the current Contructor above:
-    public Menu(int userID) {
+    /*public Menu(int userID) {
         this.userID = userID;
         initComponents();
         UserID id = new UserID(userID);
         welcomeUserName.setText("Welcome, " + id.getUserName() + "!");
-    }
+    } */
 
     /**
      * This method is called from within the constructor to initialize the form.

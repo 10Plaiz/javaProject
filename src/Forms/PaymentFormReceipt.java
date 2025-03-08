@@ -17,27 +17,70 @@ import javax.swing.JOptionPane;
  *
  * @author Pocoyo
  */
-public class PaymentForm extends javax.swing.JFrame {
+public class PaymentFormReceipt extends javax.swing.JFrame {
+    // Instance variables (add new ones to match your parameters)
     private String userName;
+    private String firstName;
+    private String lastName;
+    private String paymentMethod;
+    private String yearsToPay;
+    private double calculatedPrice;
     private int lotId;
-    private double price;
+    private String sqm;
+    private String lot;
+    private String block;
+    private String lotSize;
+    private String accountId;
     
     Connection con = Connect.connectdb();
-    /**
-     * Creates new form PaymentForm
-     */
-    public PaymentForm(String userName, int lotId, double price, String lot, String block, String lotSize, String sqm) {
+
+    // Constructor with corrected parameter assignments
+    public PaymentFormReceipt(
+        String userName,
+        String firstName, 
+        String lastName, 
+        String paymentMethod, 
+        String yearsToPay, 
+        double calculatedPrice, 
+        int lotId,
+        String sqm, 
+        String lot, 
+        String block, 
+        String lotSize, 
+        String accountId
+    ) {
+        // Assign parameters to instance variables
         this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.paymentMethod = paymentMethod;
+        this.yearsToPay = yearsToPay;
+        this.calculatedPrice = calculatedPrice;
         this.lotId = lotId;
-        this.price = price;
+        this.sqm = sqm;
+        this.lot = lot;
+        this.block = block;
+        this.lotSize = lotSize;
+        this.accountId = accountId;
+
         initComponents();
+        setPaymentReceipt();
+    }
+    
+    private void setPaymentReceipt() {
+        fnameField.setText(firstName);
+        lnameField.setText(lastName);
+        paymentMethodField.setText(paymentMethod);
+        yearsField.setText(yearsToPay);
+        calculatedPriceField.setText(String.valueOf(calculatedPrice));
         lotIDField.setText(String.valueOf(lotId));
         lotField.setText(lot);
         blockField.setText(block);
         lotTypeField.setText(lotSize);
         sqmField.setText(sqm);
-        calculatedPriceField.setText(String.valueOf(price));
+        
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -56,13 +99,9 @@ public class PaymentForm extends javax.swing.JFrame {
         lnameLabel = new javax.swing.JLabel();
         lnameField = new javax.swing.JTextField();
         paymentLabel = new javax.swing.JLabel();
-        paymentComboBox = new javax.swing.JComboBox<>();
         yearsLabel = new javax.swing.JLabel();
-        yearsField = new javax.swing.JComboBox<>();
         calculatedPriceLabel = new javax.swing.JLabel();
         calculatedPriceField = new javax.swing.JTextField();
-        submitBtn = new javax.swing.JButton();
-        resetBtn = new javax.swing.JButton();
         lotLabel = new javax.swing.JLabel();
         blockLabel = new javax.swing.JLabel();
         lotTypeLabel = new javax.swing.JLabel();
@@ -74,36 +113,28 @@ public class PaymentForm extends javax.swing.JFrame {
         lotTypeField = new javax.swing.JTextField();
         sqmField = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
-        cancelButton = new javax.swing.JButton();
+        menuBtn = new javax.swing.JButton();
+        paymentMethodField = new javax.swing.JTextField();
+        yearsField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel1.setText("PAYMENT FORMS");
+        jLabel1.setText("PAYMENT RECEIPT");
 
         fnameLabel.setText("First Name:");
 
+        fnameField.setEditable(false);
+
         lnameLabel.setText("Last Name:");
+
+        lnameField.setEditable(false);
 
         paymentLabel.setText("Payment Method:");
 
-        paymentComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cash", "Card", "Bank Transfer", "Inhouse Financing" }));
-        paymentComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                paymentComboBoxActionPerformed(evt);
-            }
-        });
-
         yearsLabel.setText("Years to Pay:");
-
-        yearsField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FULL", "1 YEAR", "3 YEARS", "5 YEARS", "10 YEARS" }));
-        yearsField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yearsFieldActionPerformed(evt);
-            }
-        });
 
         calculatedPriceLabel.setText("Calculated Price:");
 
@@ -112,20 +143,6 @@ public class PaymentForm extends javax.swing.JFrame {
         calculatedPriceField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 calculatedPriceFieldActionPerformed(evt);
-            }
-        });
-
-        submitBtn.setText("Submit");
-        submitBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitBtnActionPerformed(evt);
-            }
-        });
-
-        resetBtn.setText("Reset");
-        resetBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetBtnActionPerformed(evt);
             }
         });
 
@@ -169,10 +186,24 @@ public class PaymentForm extends javax.swing.JFrame {
         sqmField.setEditable(false);
         sqmField.setText("...");
 
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+        menuBtn.setText("Buy More");
+        menuBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                menuBtnActionPerformed(evt);
+            }
+        });
+
+        paymentMethodField.setEditable(false);
+        paymentMethodField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paymentMethodFieldActionPerformed(evt);
+            }
+        });
+
+        yearsField.setEditable(false);
+        yearsField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yearsFieldActionPerformed(evt);
             }
         });
 
@@ -191,20 +222,16 @@ public class PaymentForm extends javax.swing.JFrame {
                             .addComponent(jSeparator1)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(submitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(resetBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(fnameLabel)
                                     .addComponent(fnameField)
                                     .addComponent(lnameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(lnameField)
-                                    .addComponent(paymentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(paymentComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(paymentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
                                     .addComponent(yearsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(yearsField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(calculatedPriceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(calculatedPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(calculatedPriceField)
+                                    .addComponent(paymentMethodField)
+                                    .addComponent(yearsField))
                                 .addGap(51, 51, 51)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(lotLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -219,7 +246,7 @@ public class PaymentForm extends javax.swing.JFrame {
                                     .addComponent(sqmField, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(161, 161, 161))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(cancelButton)
+                        .addComponent(menuBtn)
                         .addContainerGap())))
         );
         jPanel2Layout.setVerticalGroup(
@@ -249,16 +276,16 @@ public class PaymentForm extends javax.swing.JFrame {
                     .addComponent(blockLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(paymentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(blockField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(blockField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(paymentMethodField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(yearsLabel)
                     .addComponent(lotTypeLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(yearsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lotTypeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lotTypeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(yearsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(calculatedPriceLabel)
@@ -267,14 +294,10 @@ public class PaymentForm extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(calculatedPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(sqmField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(submitBtn)
-                    .addComponent(resetBtn))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(43, 43, 43)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
-                .addComponent(cancelButton)
+                .addComponent(menuBtn)
                 .addContainerGap())
         );
 
@@ -309,10 +332,6 @@ public class PaymentForm extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void paymentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paymentComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_paymentComboBoxActionPerformed
 
     private void lotIDFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lotIDFieldActionPerformed
         // TODO add your handling code here:
@@ -351,117 +370,22 @@ public class PaymentForm extends javax.swing.JFrame {
         return accountId;
     }
     
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+    private void menuBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuBtnActionPerformed
         dispose();
         new Buy(userName).setVisible(true);
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
-    private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
-        String firstName = fnameField.getText();
-        String lastName = lnameField.getText();
-        String paymentMethod = paymentComboBox.getSelectedItem().toString();
-        String yearsToPay = yearsField.getSelectedItem().toString();
-        double calculatedPrice = Double.parseDouble(calculatedPriceField.getText());
-        String sqm = sqmField.getText();
-        String lot = lotField.getText();
-        String block = blockField.getText();
-        String lotSize = lotTypeField.getText();
-        String accountId = getAccountId(userName); // Implement this method to get the account ID of the user
-
-        // This doesn't work properly, even if they are the same this if else still runs
-        /* if (firstName != userName) {
-            JOptionPane.showMessageDialog(null, "The inserted first name is not the same with the signed in user.");
-            return;
-        } */
-        if (firstName.isEmpty() || lastName.isEmpty() || calculatedPriceField.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please fill in all required fields.");
-            return;
-        }
-
-        String updateLot = "UPDATE lots SET status = 'Sold', Owner = ? WHERE ID = ?";
-        String insertTransaction = "INSERT INTO record (sqm, block_id, lot_id, lot_type, account_id, price, transaction_type, bought_at, payment_method, years_to_pay) VALUES (?, ?, ?, ?, ?, ?, 'Buying', ?, ?, ?)";
-
-        PreparedStatement psUpdate = null;
-        PreparedStatement psInsert = null;
-
-        try {
-            psUpdate = con.prepareStatement(updateLot);
-            psUpdate.setString(1, userName);
-            psUpdate.setInt(2, lotId);
-
-            int affectedRows = psUpdate.executeUpdate();
-            if (affectedRows > 0) {
-                psInsert = con.prepareStatement(insertTransaction);
-                psInsert.setString(1, sqm);
-                psInsert.setString(2, block);
-                psInsert.setInt(3, lotId);
-                psInsert.setString(4, lotSize);
-                psInsert.setString(5, accountId);
-                psInsert.setDouble(6, calculatedPrice);
-                psInsert.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
-                psInsert.setString(8, paymentMethod);
-                psInsert.setString(9, yearsToPay);
-
-                psInsert.executeUpdate();
-
-                JOptionPane.showMessageDialog(null, "The lot has been bought successfully!");
-                Reserve.cancelReservationTimer(lotId); // Discard the timer from the reserve JFrame
-                dispose();
-                new PaymentFormReceipt(userName, firstName, lastName, paymentMethod, yearsToPay, calculatedPrice, lotId, sqm, lot, block,lotSize, accountId).setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(null, "Failed to buy the lot.");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error buying lot: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                if (psUpdate != null) psUpdate.close();
-                if (psInsert != null) psInsert.close();
-                if (con != null) con.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }//GEN-LAST:event_submitBtnActionPerformed
-
-    private void resetBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetBtnActionPerformed
-        fnameField.setText("");
-        lnameField.setText("");
-        paymentComboBox.setSelectedIndex(0);
-        yearsField.setSelectedIndex(0);
-        calculatedPriceField.setText("");
-    }//GEN-LAST:event_resetBtnActionPerformed
-
-    private void yearsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yearsFieldActionPerformed
-        // TODO add your handling code here:
-        String selectedTerm = yearsField.getSelectedItem().toString();
-        double calculatedPrice = price;
-
-        switch (selectedTerm) {
-            case "1 YEAR":
-                calculatedPrice = price * 1.03; // 3% interest
-                break;
-            case "3 YEARS":
-                calculatedPrice = price * 1.06; // 6% interest
-                break;
-            case "5 YEARS":
-                calculatedPrice = price * 1.09; // 9% interest
-                break;
-            case "10 YEARS":
-                calculatedPrice = price * 1.12; // 12% interest
-                break;
-            default:
-                calculatedPrice = price; // FULL PAYMENT
-                break;
-        }
-
-        calculatedPriceField.setText(String.valueOf(calculatedPrice));
-    }//GEN-LAST:event_yearsFieldActionPerformed
+    }//GEN-LAST:event_menuBtnActionPerformed
 
     private void calculatedPriceFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calculatedPriceFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_calculatedPriceFieldActionPerformed
+
+    private void paymentMethodFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paymentMethodFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_paymentMethodFieldActionPerformed
+
+    private void yearsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yearsFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_yearsFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -480,20 +404,30 @@ public class PaymentForm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PaymentForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PaymentFormReceipt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PaymentForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PaymentFormReceipt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PaymentForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PaymentFormReceipt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PaymentForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PaymentFormReceipt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PaymentForm("User Name", 1, 100000, "Lot 1", "Block A", "Lot Size", "100").setVisible(true);
+                //Example parameters
+                String userName = "John Doe";
+                int lotId = 123;
+                double price = 50000.00;
+                String lot = "A10";
+                String block = "Block 5";
+                String lotSize = "150 sqm";
+                String sqm = "150";
+
+                new PaymentForm(userName, lotId, price, lot, block, lotSize, sqm).setVisible(true);
             }
         });
     }
@@ -503,7 +437,6 @@ public class PaymentForm extends javax.swing.JFrame {
     private javax.swing.JLabel blockLabel;
     private javax.swing.JTextField calculatedPriceField;
     private javax.swing.JLabel calculatedPriceLabel;
-    private javax.swing.JButton cancelButton;
     private javax.swing.JTextField fnameField;
     private javax.swing.JLabel fnameLabel;
     private javax.swing.JLabel jLabel1;
@@ -518,13 +451,12 @@ public class PaymentForm extends javax.swing.JFrame {
     private javax.swing.JLabel lotLabel;
     private javax.swing.JTextField lotTypeField;
     private javax.swing.JLabel lotTypeLabel;
-    private javax.swing.JComboBox<String> paymentComboBox;
+    private javax.swing.JButton menuBtn;
     private javax.swing.JLabel paymentLabel;
-    private javax.swing.JButton resetBtn;
+    private javax.swing.JTextField paymentMethodField;
     private javax.swing.JTextField sqmField;
     private javax.swing.JLabel sqmLabel;
-    private javax.swing.JButton submitBtn;
-    private javax.swing.JComboBox<String> yearsField;
+    private javax.swing.JTextField yearsField;
     private javax.swing.JLabel yearsLabel;
     // End of variables declaration//GEN-END:variables
 }

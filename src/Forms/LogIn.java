@@ -154,10 +154,8 @@ public class LogIn extends javax.swing.JFrame implements User {
             // If there is an existing email and password, returns true, if not, there is no account for that and returns false
             if(rs.next()) {
                 user = true;
-                // replace with method userName = rs.getString("fname");
-                userID = rs.getInt("id");
-                UserID id = new UserID(userID);
-                id.getUserName();
+                userName = rs.getString("fname");
+                System.out.println(userName);
             }
             else {
                 user = false;

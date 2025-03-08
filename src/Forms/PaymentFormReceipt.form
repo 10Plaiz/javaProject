@@ -80,21 +80,16 @@
                                   <Component id="jSeparator1" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="submitBtn" min="-2" pref="93" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="resetBtn" min="-2" pref="93" max="-2" attributes="0"/>
-                                          </Group>
                                           <Component id="fnameLabel" min="-2" max="-2" attributes="0"/>
                                           <Component id="fnameField" alignment="0" max="32767" attributes="0"/>
                                           <Component id="lnameLabel" max="32767" attributes="0"/>
                                           <Component id="lnameField" max="32767" attributes="0"/>
-                                          <Component id="paymentLabel" max="32767" attributes="0"/>
-                                          <Component id="paymentComboBox" max="32767" attributes="0"/>
+                                          <Component id="paymentLabel" pref="192" max="32767" attributes="0"/>
                                           <Component id="yearsLabel" max="32767" attributes="0"/>
-                                          <Component id="yearsField" max="32767" attributes="0"/>
                                           <Component id="calculatedPriceLabel" max="32767" attributes="0"/>
-                                          <Component id="calculatedPriceField" min="-2" pref="192" max="-2" attributes="0"/>
+                                          <Component id="calculatedPriceField" max="32767" attributes="0"/>
+                                          <Component id="paymentMethodField" max="32767" attributes="0"/>
+                                          <Component id="yearsField" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -114,7 +109,7 @@
                               <EmptySpace min="-2" pref="161" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="menuBtn" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -153,8 +148,8 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="paymentComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="blockField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="paymentMethodField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -163,8 +158,8 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="yearsField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lotTypeField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="yearsField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -176,15 +171,10 @@
                           <Component id="calculatedPriceField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="sqmField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="submitBtn" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="resetBtn" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
                       <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
                       <EmptySpace pref="59" max="32767" attributes="0"/>
-                      <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="menuBtn" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -196,7 +186,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="24" style="0"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="PAYMENT FORMS"/>
+                <Property name="text" type="java.lang.String" value="PAYMENT RECEIPT"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="fnameLabel">
@@ -205,6 +195,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fnameField">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lnameLabel">
               <Properties>
@@ -212,53 +205,19 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="lnameField">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="paymentLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Payment Method:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="paymentComboBox">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="Cash"/>
-                    <StringItem index="1" value="Card"/>
-                    <StringItem index="2" value="Bank Transfer"/>
-                    <StringItem index="3" value="Inhouse Financing"/>
-                  </StringArray>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="paymentComboBoxActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-              </AuxValues>
-            </Component>
             <Component class="javax.swing.JLabel" name="yearsLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Years to Pay:"/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="yearsField">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="5">
-                    <StringItem index="0" value="FULL"/>
-                    <StringItem index="1" value="1 YEAR"/>
-                    <StringItem index="2" value="3 YEARS"/>
-                    <StringItem index="3" value="5 YEARS"/>
-                    <StringItem index="4" value="10 YEARS"/>
-                  </StringArray>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="yearsFieldActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="calculatedPriceLabel">
               <Properties>
@@ -272,22 +231,6 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="calculatedPriceFieldActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="submitBtn">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Submit"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="submitBtnActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="resetBtn">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Reset"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetBtnActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="lotLabel">
@@ -356,12 +299,28 @@
             </Component>
             <Component class="javax.swing.JSeparator" name="jSeparator1">
             </Component>
-            <Component class="javax.swing.JButton" name="cancelButton">
+            <Component class="javax.swing.JButton" name="menuBtn">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cancel"/>
+                <Property name="text" type="java.lang.String" value="Buy More"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuBtnActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JTextField" name="paymentMethodField">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="paymentMethodFieldActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JTextField" name="yearsField">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="yearsFieldActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
