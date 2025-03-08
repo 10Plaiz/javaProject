@@ -1,6 +1,7 @@
 package Forms;
 
 import Database.Connect;
+import MyLib.UserID;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,11 +19,20 @@ public class Menu extends javax.swing.JFrame {
     PreparedStatement pStatement = null;
     ResultSet result = null;
     private String userName;
+    private int userID;
 
-    public Menu(String userName) {
+    public Menu(String userIName) {
         this.userName = userName;
         initComponents();
         welcomeUserName.setText("Welcome, " + userName + "!");
+    }
+    
+    // If you want to make it receive the userID, replace this Constructor with the current Contructor above:
+    public Menu(int userID) {
+        this.userID = userID;
+        initComponents();
+        UserID id = new UserID(userID);
+        welcomeUserName.setText("Welcome, " + id.getUserName() + "!");
     }
 
     /**

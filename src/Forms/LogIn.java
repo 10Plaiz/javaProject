@@ -2,7 +2,7 @@ package Forms;
 import java.sql.*;
 import Database.Connect;
 import javax.swing.JOptionPane;
-import MyLib.User;
+import MyLib.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.net.InetAddress;
@@ -17,7 +17,8 @@ public class LogIn extends javax.swing.JFrame implements User {
     PreparedStatement ps = null;
     ResultSet rs = null;
     
-    private String firstName;
+    private String userName;
+    private int userID;
 
     /**
      * Creates new form LogIn
@@ -135,7 +136,7 @@ public class LogIn extends javax.swing.JFrame implements User {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-    
+
     @Override
     public boolean validateUser() {
         String login = "SELECT * FROM ACCOUNTS WHERE EMAIL = ? AND PASSWORD = ?";
@@ -153,7 +154,10 @@ public class LogIn extends javax.swing.JFrame implements User {
             // If there is an existing email and password, returns true, if not, there is no account for that and returns false
             if(rs.next()) {
                 user = true;
-                firstName = rs.getString("fname");
+                // replace with method userName = rs.getString("fname");
+                userID = rs.getInt("id");
+                UserID id = new UserID(userID);
+                id.getUserName();
             }
             else {
                 user = false;
@@ -212,7 +216,7 @@ public class LogIn extends javax.swing.JFrame implements User {
         if (user) {
             JOptionPane.showMessageDialog(null, "Sign In Successful!");
             dispose();
-            new Menu(firstName).setVisible(true);
+            new Menu(userName).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "The email or the password is incorrect.");
         }
