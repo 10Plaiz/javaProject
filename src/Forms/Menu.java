@@ -57,6 +57,7 @@ public class Menu extends javax.swing.JFrame {
         ventiBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(153, 204, 255));
 

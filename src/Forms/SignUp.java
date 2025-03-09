@@ -56,6 +56,7 @@ public class SignUp extends javax.swing.JFrame implements User {
         jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setText("First Name:");
 
