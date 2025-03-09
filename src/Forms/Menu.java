@@ -1,24 +1,13 @@
 package Forms;
 
-import Database.Connect;
 import MyLib.UserID;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Vector;
-import java.util.Arrays;
 import javax.swing.JOptionPane;
-import net.proteanit.sql.DbUtils;
 
 /**
  *
  * @author zeldr
  */
 public class Menu extends javax.swing.JFrame {
-    Connection con = Connect.connectdb();
-    PreparedStatement pStatement = null;
-    ResultSet result = null;
-    private String userName;
     private int userID;
 
     public Menu(int userID) {
@@ -166,11 +155,6 @@ public class Menu extends javax.swing.JFrame {
         });
 
         grandeBtn.setText("BUY OUR \"GRANDE\" LOT");
-        grandeBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                grandeBtnActionPerformed(evt);
-            }
-        });
 
         ventiBtn.setText("BUY OUR \"VENTI\" LOT");
 
@@ -278,12 +262,8 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_historyBtnActionPerformed
 
     private void tallBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tallBtnActionPerformed
-        // TODO add your handling code here:
+        FormFactory.createForm("LearnMore", userID).setVisible(true);
     }//GEN-LAST:event_tallBtnActionPerformed
-
-    private void grandeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grandeBtnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_grandeBtnActionPerformed
 
     /**
      * @param args the command line arguments

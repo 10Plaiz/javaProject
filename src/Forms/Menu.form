@@ -294,9 +294,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="BUY OUR &quot;GRANDE&quot; LOT"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grandeBtnActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="ventiBtn">
               <Properties>

@@ -18,6 +18,8 @@ public class FormFactory {
                 return new Buy(userID);
             case "History":
                 return new History(userID);
+            case "LearnMore":
+                return new LearnMore(userID);
             default:
                 throw new IllegalArgumentException("Unknown form type: " + formType);
         }
