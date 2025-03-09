@@ -349,7 +349,7 @@ public class PaymentForm extends javax.swing.JFrame {
             return;
         }
     
-        String updateLot = "UPDATE lots SET status = 'Sold', Owner = ? WHERE ID = ?";
+        String updateLot = "UPDATE lots SET status = 'Sold', Owner = ?, owner_id = ? WHERE ID = ?";
         String insertTransaction = "INSERT INTO record (sqm, block_id, lot_id, lot_type, account_id, price, transaction_type, bought_at, payment_method, years_to_pay) VALUES (?, ?, ?, ?, ?, ?, 'Buying', ?, ?, ?)";
     
         PreparedStatement psUpdate = null;
@@ -358,7 +358,8 @@ public class PaymentForm extends javax.swing.JFrame {
         try {
             psUpdate = con.prepareStatement(updateLot);
             psUpdate.setString(1, firstName);
-            psUpdate.setInt(2, lotId);
+            psUpdate.setInt(2, userID);
+            psUpdate.setInt(3, lotId);
     
             int affectedRows = psUpdate.executeUpdate();
             if (affectedRows > 0) {

@@ -142,7 +142,7 @@ public class Sell extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         int lotId = Integer.parseInt(model.getValueAt(row, 0).toString());
 
-        String updateQuery = "UPDATE lots SET Owner = NULL, status = NULL WHERE ID = ?";
+        String updateQuery = "UPDATE lots SET Owner = NULL, owner_id = NULL, status = NULL WHERE ID = ?";
 
         try {
             PreparedStatement psUpdate = con.prepareStatement(updateQuery);
@@ -162,14 +162,14 @@ public class Sell extends javax.swing.JFrame {
     }//GEN-LAST:event_sellButtonActionPerformed
 
     public void displayProperty() {
-        String data = "SELECT * FROM Lots WHERE Owner = (SELECT fname FROM ACCOUNTS WHERE id = ?)";
-        
+        String data = "SELECT * FROM Lots WHERE owner_id = ?";
+
         try {
             ps = con.prepareStatement(data);
             ps.setInt(1, userID);
             rs = ps.executeQuery();
             jTable1.setModel(DbUtils.resultSetToTableModel(rs));
-            
+    
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
             e.printStackTrace();
