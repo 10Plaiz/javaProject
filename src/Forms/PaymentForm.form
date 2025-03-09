@@ -292,7 +292,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="lotLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Lot"/>
+                <Property name="text" type="java.lang.String" value="Lot Number:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="blockLabel">

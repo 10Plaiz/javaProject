@@ -130,15 +130,15 @@ public class Buy extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Please select a lot to buy.");
             return;
         }
-
+    
         DefaultTableModel model = (DefaultTableModel) reservedLotsTable.getModel();
         int lotId = Integer.parseInt(model.getValueAt(row, 0).toString());
+        String block = model.getValueAt(row, 1).toString();
+        String lotNumber = model.getValueAt(row, 2).toString();
+        String lotType = model.getValueAt(row, 3).toString();
+        String sqm = model.getValueAt(row, 4).toString();
         double price = Double.parseDouble(model.getValueAt(row, 5).toString());
-        String lot = model.getValueAt(row, 3).toString();
-        String block = model.getValueAt(row, 2).toString();
-        String lotSize = model.getValueAt(row, 4).toString();
-        String sqm = model.getValueAt(row, 1).toString();
-
+    
         // Clear the reserved_by column in the database
         String clearReservation = "UPDATE lots SET reserved_by = NULL WHERE ID = ?";
         try (PreparedStatement psClear = con.prepareStatement(clearReservation)) {
@@ -149,34 +149,34 @@ public class Buy extends javax.swing.JFrame {
             e.printStackTrace();
             return;
         }
-
+    
         // Open the PaymentForm
         dispose();
-        new PaymentForm(userID, lotId, price, lot, block, lotSize, sqm).setVisible(true);
+        new PaymentForm(userID, lotId, price, lotNumber, block, lotType, sqm).setVisible(true);
     }//GEN-LAST:event_buyBtnActionPerformed
 
     private void checkReservedSlots() {
-        String query = "SELECT ID, SQM, Block, Lot, LotSize, Price FROM Lots WHERE reserved_by = ? AND status = 'Reserved'";
+        String query = "SELECT ID AS lot_id, Block AS block_id, Lot AS lot_number, LotSize AS lot_type, SQM, Price FROM Lots WHERE reserved_by = ? AND status = 'Reserved'";
         try {
             PreparedStatement pStatement = con.prepareStatement(query);
             pStatement.setInt(1, userID);
             ResultSet result = pStatement.executeQuery();
-
-            DefaultTableModel model = new DefaultTableModel(new String[]{"ID", "SQM", "Block", "Lot", "LotSize", "Price"}, 0);
+    
+            DefaultTableModel model = new DefaultTableModel(new String[]{"lot_id", "block_id", "lot_number", "lot_type", "SQM", "Price"}, 0);
             boolean hasReservedLots = false;
-
+    
             while (result.next()) {
                 hasReservedLots = true;
                 model.addRow(new Object[]{
-                    result.getInt("ID"),
+                    result.getInt("lot_id"),
+                    result.getString("block_id"),
+                    result.getString("lot_number"),
+                    result.getString("lot_type"),
                     result.getString("SQM"),
-                    result.getString("Block"),
-                    result.getString("Lot"),
-                    result.getString("LotSize"),
                     result.getDouble("Price")
                 });
             }
-
+    
             if (hasReservedLots) {
                 reservedLotsTable.setModel(model);
                 reservedLotsTable.setVisible(true);

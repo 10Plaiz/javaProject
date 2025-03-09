@@ -1,6 +1,7 @@
 package Forms;
 
 import Database.Connect;
+import java.security.Timestamp;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -132,24 +133,41 @@ public class Sell extends javax.swing.JFrame {
     }//GEN-LAST:event_homeBtnActionPerformed
 
     private void sellButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sellButtonActionPerformed
-        // TODO add your handling code here:
         int row = jTable1.getSelectedRow();
         if (row == -1) {
             JOptionPane.showMessageDialog(null, "Please select a lot to sell.");
             return;
         }
-
+    
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         int lotId = Integer.parseInt(model.getValueAt(row, 0).toString());
-
+        String sqm = model.getValueAt(row, 1).toString(); // block_id should be in SQM
+        String block = model.getValueAt(row, 2).toString(); // lot_number should be in block_id
+        String lotNumber = model.getValueAt(row, 3).toString(); // lot_type should be in lot_number
+        String lotType = model.getValueAt(row, 4).toString(); // SQM should be in lot_type
+        double price = Double.parseDouble(model.getValueAt(row, 5).toString());
+    
         String updateQuery = "UPDATE lots SET Owner = NULL, owner_id = NULL, status = NULL WHERE ID = ?";
-
-        try {
-            PreparedStatement psUpdate = con.prepareStatement(updateQuery);
+        String insertTransaction = "INSERT INTO record (account_id, transaction_type, lot_id, block_id, lot_number, lot_type, SQM, price, sold_at) VALUES (?, 'Selling', ?, ?, ?, ?, ?, ?, ?)";
+    
+        try (PreparedStatement psUpdate = con.prepareStatement(updateQuery);
+             PreparedStatement psInsert = con.prepareStatement(insertTransaction)) {
+            // Update lot status
             psUpdate.setInt(1, lotId);
-
             int affectedRows = psUpdate.executeUpdate();
+    
             if (affectedRows > 0) {
+                // Insert transaction record
+                psInsert.setInt(1, userID);
+                psInsert.setInt(2, lotId);
+                psInsert.setString(3, block); // lot_number should be in block_id
+                psInsert.setString(4, lotNumber); // lot_type should be in lot_number
+                psInsert.setString(5, lotType); // SQM should be in lot_type
+                psInsert.setString(6, sqm); // block_id should be in SQM
+                psInsert.setDouble(7, price);
+                psInsert.setString(8, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+                psInsert.executeUpdate();
+    
                 JOptionPane.showMessageDialog(null, "The lot has been sold successfully!");
                 displayProperty(); // Refresh the table
             } else {

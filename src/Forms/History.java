@@ -5,6 +5,8 @@
 package Forms;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 import Database.Connect;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -208,10 +210,11 @@ public class History extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void displayTransactions(String filter) {
-        String query = "SELECT block_id, lot, lot_type, transaction_type, " +
-                       "CASE WHEN transaction_type = 'Reservation' THEN reserved_at " +
-                       "WHEN transaction_type = 'Buying' THEN bought_at END AS time " +
-                       "FROM record WHERE account_id = ?";
+        String query = "SELECT lot_id, lot_number, block_id, transaction_type, " +
+                    "CASE WHEN transaction_type = 'Reservation' THEN reserved_at " +
+                    "WHEN transaction_type = 'Buying' THEN bought_at " +
+                    "WHEN transaction_type = 'Selling' THEN sold_at END AS time " +
+                    "FROM record WHERE account_id = ?";
 
         if (!filter.equals("All")) {
             query += " AND transaction_type = ?";
@@ -223,7 +226,17 @@ public class History extends javax.swing.JFrame {
                 ps.setString(2, filter);
             }
             try (ResultSet rs = ps.executeQuery()) {
-                transactionTable.setModel(DbUtils.resultSetToTableModel(rs));
+                DefaultTableModel model = new DefaultTableModel(new String[]{"lot_id", "lot_number", "block_id", "transaction_type", "time"}, 0);
+                while (rs.next()) {
+                    model.addRow(new Object[]{
+                        rs.getInt("lot_id"),
+                        rs.getString("lot_number"),
+                        rs.getString("block_id"),
+                        rs.getString("transaction_type"),
+                        rs.getString("time")
+                    });
+                }
+                transactionTable.setModel(model);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());

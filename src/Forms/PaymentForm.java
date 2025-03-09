@@ -21,20 +21,28 @@ public class PaymentForm extends javax.swing.JFrame {
     private int userID;
     private int lotId;
     private double price;
+    private String lotNumber;
+    private String block;
+    private String lotType;
+    private String sqm;
     
     Connection con = Connect.connectdb();
     /**
      * Creates new form PaymentForm
      */
-    public PaymentForm(int userID, int lotId, double price, String lot, String block, String lotSize, String sqm) {
+    public PaymentForm(int userID, int lotId, double price, String lotNumber, String block, String lotType, String sqm) {
         this.userID = userID;
         this.lotId = lotId;
         this.price = price;
+        this.lotNumber = lotNumber;
+        this.block = block;
+        this.lotType = lotType;
+        this.sqm = sqm;
         initComponents();
         lotIDField.setText(String.valueOf(lotId));
-        lotField.setText(lot);
+        lotField.setText(lotNumber);
         blockField.setText(block);
-        lotTypeField.setText(lotSize);
+        lotTypeField.setText(lotType);
         sqmField.setText(sqm);
         calculatedPriceField.setText(String.valueOf(price));
     }
@@ -129,7 +137,7 @@ public class PaymentForm extends javax.swing.JFrame {
             }
         });
 
-        lotLabel.setText("Lot");
+        lotLabel.setText("Lot Number:");
 
         blockLabel.setText("Block");
 
@@ -342,7 +350,7 @@ public class PaymentForm extends javax.swing.JFrame {
         String lot = lotField.getText();
         String block = blockField.getText();
         String lotSize = lotTypeField.getText();
-        int accountId = userID; // Use userID directly as accountId
+        int accountId = userID;
     
         if (firstName.isEmpty() || lastName.isEmpty() || calculatedPriceField.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Please fill in all required fields.");
@@ -350,7 +358,7 @@ public class PaymentForm extends javax.swing.JFrame {
         }
     
         String updateLot = "UPDATE lots SET status = 'Sold', Owner = ?, owner_id = ? WHERE ID = ?";
-        String insertTransaction = "INSERT INTO record (sqm, block_id, lot_id, lot_type, account_id, price, transaction_type, bought_at, payment_method, years_to_pay) VALUES (?, ?, ?, ?, ?, ?, 'Buying', ?, ?, ?)";
+        String insertTransaction = "INSERT INTO record (account_id, transaction_type, lot_id, block_id, lot_number, lot_type, SQM, price, bought_at, payment_method, years_to_pay) VALUES (?, 'Buying', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
         PreparedStatement psUpdate = null;
         PreparedStatement psInsert = null;
@@ -364,15 +372,16 @@ public class PaymentForm extends javax.swing.JFrame {
             int affectedRows = psUpdate.executeUpdate();
             if (affectedRows > 0) {
                 psInsert = con.prepareStatement(insertTransaction);
-                psInsert.setString(1, sqm);
-                psInsert.setString(2, block);
-                psInsert.setInt(3, lotId);
-                psInsert.setString(4, lotSize);
-                psInsert.setInt(5, accountId); // Use userID directly as accountId
-                psInsert.setDouble(6, calculatedPrice);
-                psInsert.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
-                psInsert.setString(8, paymentMethod);
-                psInsert.setString(9, yearsToPay);
+                psInsert.setInt(1, accountId);
+                psInsert.setInt(2, lotId);
+                psInsert.setString(3, block);
+                psInsert.setString(4, lot);
+                psInsert.setString(5, lotSize);
+                psInsert.setString(6, sqm);
+                psInsert.setDouble(7, calculatedPrice);
+                psInsert.setString(8, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+                psInsert.setString(9, paymentMethod);
+                psInsert.setString(10, yearsToPay);
     
                 psInsert.executeUpdate();
     

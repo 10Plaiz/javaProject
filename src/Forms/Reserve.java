@@ -13,10 +13,16 @@ import net.proteanit.sql.DbUtils;
 import java.awt.Component;
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
+import java.util.HashMap;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -347,14 +353,14 @@ import java.text.SimpleDateFormat;
             return;
         }
     
-        int idAcc = Integer.parseInt(model.getValueAt(row, 0).toString());
+        int lotId = Integer.parseInt(model.getValueAt(row, 0).toString());
     
         String checkOwner = "SELECT reserved_by, status FROM Lots WHERE ID = ?";
         String reserveLot = "UPDATE lots SET reserved_by = ?, status = 'Reserved' WHERE ID = ?";
-        String insertReservation = "INSERT INTO record (SQM, block_id, lot_id, lot_type, account_id, reserved_at, expires_at, transaction_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertReservation = "INSERT INTO record (account_id, transaction_type, lot_id, block_id, lot_number, lot_type, SQM, price, reserved_at, expires_at) VALUES (?, 'Reservation', ?, ?, ?, ?, ?, ?, ?, ?)";
     
         try (PreparedStatement psCheck = con.prepareStatement(checkOwner)) {
-            psCheck.setInt(1, idAcc);
+            psCheck.setInt(1, lotId);
     
             try (ResultSet rs = psCheck.executeQuery()) {
                 if (rs.next()) {
@@ -375,49 +381,56 @@ import java.text.SimpleDateFormat;
                         "Do you want to pay the reservation fee?", 
                         "Confirm Reservation", 
                         JOptionPane.YES_NO_OPTION);
-                    
+    
                     if (response == JOptionPane.YES_OPTION) {
                         try (PreparedStatement updateStatement = con.prepareStatement(reserveLot);
                              PreparedStatement insertStatement = con.prepareStatement(insertReservation)) {
-                            
+    
                             // Update lot reservation
                             updateStatement.setInt(1, userID);
-                            updateStatement.setInt(2, idAcc);
+                            updateStatement.setInt(2, lotId);
                             int affectedRows = updateStatement.executeUpdate();
     
                             if (affectedRows > 0) {
                                 // Insert reservation record
                                 String sqm = model.getValueAt(row, 1).toString();
                                 String block = model.getValueAt(row, 2).toString();
-                                String lot = model.getValueAt(row, 3).toString();
-                                String lotSize = model.getValueAt(row, 4).toString();
-                                String accountId = String.valueOf(userID);
+                                String lotNumber = model.getValueAt(row, 3).toString();
+                                String lotType = model.getValueAt(row, 4).toString();
+                                double price = Double.parseDouble(model.getValueAt(row, 5).toString());
     
                                 Timestamp reservedAt = new Timestamp(System.currentTimeMillis());
                                 Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + 2 * 60 * 1000);
     
-                                insertStatement.setString(1, sqm);
-                                insertStatement.setString(2, block);
-                                insertStatement.setString(3, lot);
-                                insertStatement.setString(4, lotSize);
-                                insertStatement.setString(5, accountId);
-                                insertStatement.setTimestamp(6, reservedAt);
-                                insertStatement.setTimestamp(7, expiresAt);
-                                insertStatement.setString(8, "Reservation");
+                                // Debugging: Print timestamps
+                                System.out.println("Reserved At: " + reservedAt);
+                                System.out.println("Expires At: " + expiresAt);
+    
+                                insertStatement.setInt(1, userID);
+                                insertStatement.setInt(2, lotId);
+                                insertStatement.setString(3, block);
+                                insertStatement.setString(4, lotNumber);
+                                insertStatement.setString(5, lotType);
+                                insertStatement.setString(6, sqm);
+                                insertStatement.setDouble(7, price);
+                                insertStatement.setTimestamp(8, reservedAt);
+                                insertStatement.setTimestamp(9, expiresAt);
                                 insertStatement.executeUpdate();
     
                                 JOptionPane.showMessageDialog(null, "The lot has been reserved!");
                                 displayLots();
     
-                                // Schedule expiration check
-                                Timer timer = new Timer();
-                                timer.schedule(new TimerTask() {
+                                // Schedule expiration check using Swing Timer
+                                int delay = 2 * 60 * 1000; // 2 minutes
+                                Timer swingTimer = new Timer(delay, new ActionListener() {
                                     @Override
-                                    public void run() {
-                                        checkReservationExpiration(idAcc);
+                                    public void actionPerformed(ActionEvent e) {
+                                        checkReservationExpiration(lotId);
                                     }
-                                }, 2 * 60 * 1000);
-                                addReservationTimer(idAcc, timer);
+                                });
+                                swingTimer.setRepeats(false); // Only run once
+                                swingTimer.start();
+                                addReservationTimer(lotId, swingTimer);
                             } else {
                                 JOptionPane.showMessageDialog(null, "Failed to reserve the lot.");
                             }
@@ -434,36 +447,44 @@ import java.text.SimpleDateFormat;
     }
     
     private void checkReservationExpiration(int lotId) {
-        String checkReservation = "SELECT reserved_by FROM Lots WHERE ID = ?";
-        String updateLot = "UPDATE Lots SET reserved_by = NULL, status = NULL WHERE ID = ?";
+        System.out.println("Checking expiration for Lot ID: " + lotId);
     
-        try {
-            PreparedStatement psCheck = con.prepareStatement(checkReservation);
+        String checkReservation = "SELECT reserved_by FROM Lots WHERE ID = ?";
+        String updateLot = "UPDATE Lots SET reserved_by = NULL, status = 'Available' WHERE ID = ?";
+    
+        try (PreparedStatement psCheck = con.prepareStatement(checkReservation)) {
             psCheck.setInt(1, lotId);
     
             try (ResultSet rs = psCheck.executeQuery()) {
                 if (rs.next()) {
                     String reservedBy = rs.getString("reserved_by");
+                    System.out.println("Lot reserved by: " + reservedBy);
     
-                    if (reservedBy != null && reservedBy.equals(userName)) {
-                        // Reservation expired, update the lot status
+                    // Compare user ID properly
+                    if (reservedBy != null && reservedBy.equals(String.valueOf(userID))) {
+                        System.out.println("Reservation expired. Updating lot...");
+    
                         try (PreparedStatement updateStatement = con.prepareStatement(updateLot)) {
                             updateStatement.setInt(1, lotId);
-                            updateStatement.executeUpdate();
-                            displayLots(); // Refresh the table
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
+                            int rowsAffected = updateStatement.executeUpdate();
+    
+                            if (rowsAffected > 0) {
+                                System.out.println("Lot reservation cleared successfully.");
+                                displayLots(); // Refresh table
+                            } else {
+                                System.out.println("Failed to update lot status.");
+                            }
                         }
+                    } else {
+                        System.out.println("Reservation is held by another user, not updating.");
                     }
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-    }
-    
+    }    
+
     private String getAccountId(String userName) {
         String accountId = null;
         String query = "SELECT id FROM accounts WHERE fname = ?"; // Adjust the table and column names as per your database schema
@@ -491,13 +512,16 @@ import java.text.SimpleDateFormat;
     }
     
     public static void addReservationTimer(int lotId, Timer timer) {
+        if (reservationTimers == null) {
+            reservationTimers = new HashMap<>();
+        }
         reservationTimers.put(lotId, timer);
     }
     
-        public static void cancelReservationTimer(int lotId) {
+    public static void cancelReservationTimer(int lotId) {
         Timer timer = reservationTimers.get(lotId);
         if (timer != null) {
-            timer.cancel();
+            timer.stop();
             reservationTimers.remove(lotId);
         }
     }
