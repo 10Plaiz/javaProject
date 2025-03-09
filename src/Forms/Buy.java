@@ -26,6 +26,7 @@ public class Buy extends javax.swing.JFrame {
 
     private int userID;
     private String userName;
+    private String email;
     /**
      * Creates new form Buy
      */
@@ -62,7 +63,8 @@ public class Buy extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
-        messageLabel.setText("*Message here*");
+        messageLabel.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        messageLabel.setText("Buy Properties");
 
         reservedLotsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -179,14 +181,14 @@ public class Buy extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(buyBtn))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(249, 249, 249)
+                        .addGap(227, 227, 227)
                         .addComponent(messageLabel)))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(28, Short.MAX_VALUE)
+                .addContainerGap(19, Short.MAX_VALUE)
                 .addComponent(messageLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -203,7 +205,7 @@ public class Buy extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private String getUserNameById(int userID) {
-        String query = "SELECT fname FROM accounts WHERE id = ?";
+        String query = "SELECT fname, email FROM accounts WHERE id = ?";
         String userName = null;
 
         try {
@@ -213,6 +215,8 @@ public class Buy extends javax.swing.JFrame {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     userName = rs.getString("fname");
+                    email = rs.getString("email");
+                    System.out.println(email);
                 } else {
                     throw new Exception("No user found for ID: " + userID);
                 }
@@ -262,7 +266,7 @@ public class Buy extends javax.swing.JFrame {
     
         // Open the PaymentForm
         dispose();
-        new PaymentForm(userID, lotId, price, lotNumber, block, lotType, sqm).setVisible(true);
+        new PaymentForm(userID, lotId, price, lotNumber, block, lotType, sqm, email).setVisible(true);
     }//GEN-LAST:event_buyBtnActionPerformed
 
     private void reserveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveBtnActionPerformed

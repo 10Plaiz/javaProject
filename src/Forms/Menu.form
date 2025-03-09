@@ -73,15 +73,13 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="logoutButton" alignment="0" max="32767" attributes="0"/>
-                              <Component id="historyBtn" alignment="0" max="32767" attributes="0"/>
-                              <Component id="reserveBtn" alignment="0" max="32767" attributes="0"/>
-                              <Component id="buyBtn" alignment="0" max="32767" attributes="0"/>
-                              <Component id="sellBtn" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="welcomeUserName" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="logoutButton" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="welcomeUserName" max="32767" attributes="0"/>
+                          <Component id="reserveBtn" alignment="0" max="32767" attributes="0"/>
+                          <Component id="sellBtn" alignment="0" max="32767" attributes="0"/>
+                          <Component id="buyBtn" alignment="0" max="32767" attributes="0"/>
+                          <Component id="historyBtn" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace pref="28" max="32767" attributes="0"/>
                   </Group>
@@ -90,7 +88,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                       <Component id="welcomeUserName" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="reserveBtn" min="-2" max="-2" attributes="0"/>

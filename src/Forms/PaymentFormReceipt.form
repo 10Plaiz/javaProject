@@ -77,20 +77,29 @@
                               <EmptySpace min="-2" pref="290" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="jSeparator1" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="fnameLabel" min="-2" max="-2" attributes="0"/>
-                                          <Component id="fnameField" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="lnameLabel" max="32767" attributes="0"/>
-                                          <Component id="lnameField" max="32767" attributes="0"/>
-                                          <Component id="paymentLabel" pref="192" max="32767" attributes="0"/>
-                                          <Component id="yearsLabel" max="32767" attributes="0"/>
-                                          <Component id="calculatedPriceLabel" max="32767" attributes="0"/>
-                                          <Component id="calculatedPriceField" max="32767" attributes="0"/>
-                                          <Component id="paymentMethodField" max="32767" attributes="0"/>
-                                          <Component id="yearsField" max="32767" attributes="0"/>
+                                      <EmptySpace min="-2" pref="510" max="-2" attributes="0"/>
+                                      <Component id="menuBtn" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="fnameLabel" min="-2" max="-2" attributes="0"/>
+                                              <Component id="fnameField" alignment="0" max="32767" attributes="0"/>
+                                              <Component id="lnameLabel" max="32767" attributes="0"/>
+                                              <Component id="lnameField" max="32767" attributes="0"/>
+                                              <Component id="paymentLabel" pref="192" max="32767" attributes="0"/>
+                                              <Component id="yearsLabel" max="32767" attributes="0"/>
+                                              <Component id="calculatedPriceLabel" max="32767" attributes="0"/>
+                                              <Component id="calculatedPriceField" max="32767" attributes="0"/>
+                                              <Component id="paymentMethodField" max="32767" attributes="0"/>
+                                              <Component id="yearsField" max="32767" attributes="0"/>
+                                          </Group>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="emailField1" alignment="0" max="32767" attributes="0"/>
+                                              <Component id="emailLabel1" alignment="0" min="-2" pref="192" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
                                       <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -106,11 +115,8 @@
                                           <Component id="sqmField" min="-2" pref="192" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
+                                  <Component id="jSeparator1" alignment="0" min="-2" pref="435" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="161" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="menuBtn" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -143,40 +149,49 @@
                           <Component id="lotField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="paymentLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="blockLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="blockLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="blockField" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="emailLabel1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="emailField1" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="blockField" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="paymentMethodField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="lotTypeLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lotTypeField" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="sqmLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="sqmField" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="60" max="32767" attributes="0"/>
+                              <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
+                              <Component id="menuBtn" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="paymentLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="paymentMethodField" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="yearsLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="yearsField" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="calculatedPriceLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="calculatedPriceField" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="yearsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lotTypeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lotTypeField" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="yearsField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="calculatedPriceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="sqmLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="calculatedPriceField" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="sqmField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
-                      <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
-                      <EmptySpace pref="59" max="32767" attributes="0"/>
-                      <Component id="menuBtn" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -323,6 +338,13 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="yearsFieldActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JTextField" name="emailField1">
+            </Component>
+            <Component class="javax.swing.JLabel" name="emailLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Email:"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>
