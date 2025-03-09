@@ -149,7 +149,7 @@ public class History extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(transactionTable);
 
-        optionsCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Reserving", "Buying", "Selling" }));
+        optionsCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Reservation", "Buying", "Selling" }));
         optionsCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 optionsComboActionPerformed(evt);

@@ -300,10 +300,10 @@ import javax.swing.table.DefaultTableModel;
     // This method is used for the Search Button
     public void Search() {
         String baseQuery = "SELECT ID, SQM, Block, Lot, LotSize, Price, " +
-        "CASE WHEN status = 'Sold' THEN 'Sold' " +
-        "WHEN Owner IS NOT NULL AND Owner != '' THEN 'Reserved' " +
-        "ELSE 'Available' END AS Owner " +
-        "FROM lots";
+                           "CASE WHEN status = 'Sold' THEN 'Sold' " +
+                           "WHEN reserved_by IS NOT NULL AND reserved_by != '' THEN 'Reserved' " +
+                           "ELSE 'Available' END AS status " +
+                           "FROM lots";
         String lotsize = sizeBox.getSelectedItem().toString();
         String block = blockBox.getSelectedItem().toString();
         boolean hasCondition = false;
@@ -334,8 +334,8 @@ import javax.swing.table.DefaultTableModel;
             try (ResultSet result = pStatement.executeQuery()) {
                 // Display all the rows in the jTable
                 jTable1.setModel(DbUtils.resultSetToTableModel(result));
-                
-                // Set custom cell renderer for the Owner column
+    
+                // Set custom cell renderer for the status column
                 jTable1.getColumnModel().getColumn(6).setCellRenderer(new CustomCellRenderer());
             }
         } catch (Exception e) {
@@ -381,11 +381,11 @@ import javax.swing.table.DefaultTableModel;
                         "Do you want to pay the reservation fee?", 
                         "Confirm Reservation", 
                         JOptionPane.YES_NO_OPTION);
-    
+                    
                     if (response == JOptionPane.YES_OPTION) {
                         try (PreparedStatement updateStatement = con.prepareStatement(reserveLot);
                              PreparedStatement insertStatement = con.prepareStatement(insertReservation)) {
-    
+                            
                             // Update lot reservation
                             updateStatement.setInt(1, userID);
                             updateStatement.setInt(2, lotId);
@@ -402,9 +402,14 @@ import javax.swing.table.DefaultTableModel;
                                 Timestamp reservedAt = new Timestamp(System.currentTimeMillis());
                                 Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + 2 * 60 * 1000);
     
-                                // Debugging: Print timestamps
-                                System.out.println("Reserved At: " + reservedAt);
-                                System.out.println("Expires At: " + expiresAt);
+                                // Format the timestamps into standard date format
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                String reservedAtStr = sdf.format(reservedAt);
+                                String expiresAtStr = sdf.format(expiresAt);
+    
+                                // Debugging: Print formatted timestamps
+                                System.out.println("Reserved At: " + reservedAtStr);
+                                System.out.println("Expires At: " + expiresAtStr);
     
                                 insertStatement.setInt(1, userID);
                                 insertStatement.setInt(2, lotId);
@@ -413,8 +418,8 @@ import javax.swing.table.DefaultTableModel;
                                 insertStatement.setString(5, lotType);
                                 insertStatement.setString(6, sqm);
                                 insertStatement.setDouble(7, price);
-                                insertStatement.setTimestamp(8, reservedAt);
-                                insertStatement.setTimestamp(9, expiresAt);
+                                insertStatement.setString(8, reservedAtStr);
+                                insertStatement.setString(9, expiresAtStr);
                                 insertStatement.executeUpdate();
     
                                 JOptionPane.showMessageDialog(null, "The lot has been reserved!");
