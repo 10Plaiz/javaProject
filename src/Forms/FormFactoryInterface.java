@@ -10,5 +10,4 @@ package Forms;
  */
 public interface FormFactoryInterface {
     javax.swing.JFrame createForm(int userID);
-
 }
