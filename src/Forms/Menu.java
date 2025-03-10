@@ -147,6 +147,7 @@ public class Menu extends javax.swing.JFrame {
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/venti.png"))); // NOI18N
         jLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        tallBtn.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         tallBtn.setText("BUY OUR \"TALL\" LOT");
         tallBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,9 +155,21 @@ public class Menu extends javax.swing.JFrame {
             }
         });
 
+        grandeBtn.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         grandeBtn.setText("BUY OUR \"GRANDE\" LOT");
+        grandeBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                grandeBtnActionPerformed(evt);
+            }
+        });
 
+        ventiBtn.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         ventiBtn.setText("BUY OUR \"VENTI\" LOT");
+        ventiBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ventiBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -262,8 +275,19 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_historyBtnActionPerformed
 
     private void tallBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tallBtnActionPerformed
+        dispose();
         FormFactory.createForm("LearnMore", userID).setVisible(true);
     }//GEN-LAST:event_tallBtnActionPerformed
+
+    private void grandeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_grandeBtnActionPerformed
+        dispose();
+        FormFactory.createForm("LearnMore", userID).setVisible(true);
+    }//GEN-LAST:event_grandeBtnActionPerformed
+
+    private void ventiBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ventiBtnActionPerformed
+        dispose();
+        FormFactory.createForm("LearnMore", userID).setVisible(true);
+    }//GEN-LAST:event_ventiBtnActionPerformed
 
     /**
      * @param args the command line arguments

@@ -1,15 +1,13 @@
 package Forms;
 
-/**
- *
- * @author zeldr
- */
 public class FormFactory {
     
     public static javax.swing.JFrame createForm(String formType, int userID) {
         switch (formType) {
             case "LogIn":
                 return new LogIn();
+            case "Menu":
+                return new Menu(userID);
             case "Reserve":
                 return new Reserve(userID);
             case "Sell":

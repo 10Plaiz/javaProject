@@ -213,6 +213,8 @@ public class PaymentFormReceipt extends javax.swing.JFrame {
             }
         });
 
+        emailField1.setEditable(false);
+
         emailLabel1.setText("Email:");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);

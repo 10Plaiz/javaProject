@@ -1,18 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package Forms;
 
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-
 import Database.Connect;
+import java.sql.ResultSet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
-import net.proteanit.sql.DbUtils;
 /**
  *
  * @author Pocoyo
@@ -22,9 +15,6 @@ public class History extends javax.swing.JFrame {
     private String userName;
     Connection con = Connect.connectdb();
 
-    /**
-     * Creates new form History
-     */
     public History(int userID) {
         this.userID = userID;
         this.userName = getUserNameById(userID);
@@ -287,32 +277,30 @@ public class History extends javax.swing.JFrame {
 
     private void reserveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reserveBtnActionPerformed
         dispose();
-        new Reserve(userID).setVisible(true);
+        FormFactory.createForm("Reserve", userID).setVisible(true);
     }//GEN-LAST:event_reserveBtnActionPerformed
 
     private void sellBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sellBtnActionPerformed
         dispose();
-        new Sell(userID).setVisible(true);
+        FormFactory.createForm("Sell", userID).setVisible(true);
     }//GEN-LAST:event_sellBtnActionPerformed
 
     private void buyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyBtnActionPerformed
         dispose();
-        new Buy(userID).setVisible(true);
+        FormFactory.createForm("Buy", userID).setVisible(true);
     }//GEN-LAST:event_buyBtnActionPerformed
 
     private void historyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historyBtnActionPerformed
         dispose();
-        new History(userID).setVisible(true);
+        FormFactory.createForm("History", userID).setVisible(true);
     }//GEN-LAST:event_historyBtnActionPerformed
 
     private void optionsComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsComboActionPerformed
-        // TODO add your handling code here:
         String selectedOption = optionsCombo.getSelectedItem().toString();
         displayTransactions(selectedOption);
     }//GEN-LAST:event_optionsComboActionPerformed
 
     private void homeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBtnActionPerformed
-        // TODO add your handling code here:
         dispose();
         new Menu(userID).setVisible(true);
     }//GEN-LAST:event_homeBtnActionPerformed

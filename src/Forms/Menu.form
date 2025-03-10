@@ -284,6 +284,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="tallBtn">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="10" style="0"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="BUY OUR &quot;TALL&quot; LOT"/>
               </Properties>
               <Events>
@@ -292,13 +295,25 @@
             </Component>
             <Component class="javax.swing.JButton" name="grandeBtn">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="10" style="0"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="BUY OUR &quot;GRANDE&quot; LOT"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="grandeBtnActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="ventiBtn">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="10" style="0"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="BUY OUR &quot;VENTI&quot; LOT"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ventiBtnActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
